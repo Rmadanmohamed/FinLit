@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator | FinLit2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Added animations and UI interactions -->
+    <script src="animations.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-calculator"></i> Professional Loan Calculator</h1>
+                <p>Calculate your loan payments with precision and confidence</p>
+            </div>
+            <div class="main-site-link">
+                <a href="../FINLIT.html#tools" class="back-to-main">
+                    <i class="fas fa-home"></i> Back to Main Site
+                </a>
+            </div>
+        </header>
+
+        <nav class="calculator-nav">
+            <button class="nav-btn active" data-calculator="amortized">
+                <i class="fas fa-home"></i>
+                <span>Amortized Loan</span>
+            </button>
+            <button class="nav-btn" data-calculator="deferred">
+                <i class="fas fa-clock"></i>
+                <span>Deferred Payment</span>
+            </button>
+            <button class="nav-btn" data-calculator="bond">
+                <i class="fas fa-certificate"></i>
+                <span>Bond Calculator</span>
+            </button>
+        </nav>
+
+        <main class="main-content">
+            <!-- Amortized Loan Calculator -->
+            <div class="calculator-section active" id="amortized-calculator">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-chart-line"></i> Amortized Loan Calculator</h2>
+                        <p class="description">Calculate fixed payments for mortgages, auto loans, student loans, and personal loans</p>
+                        
+                        <form class="calculator-form" id="amortized-form">
+                            <div class="form-group">
+                                <label for="loan-amount"><i class="fas fa-dollar-sign"></i> Loan Amount</label>
+                                <input type="number" id="loan-amount" value="100000" min="1" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="loan-years"><i class="fas fa-calendar-alt"></i> Loan Term</label>
+                                    <div class="input-group">
+                                        <input type="number" id="loan-years" value="10" min="0" max="50">
+                                        <span class="input-suffix">years</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="loan-months">Additional Months</label>
+                                    <div class="input-group">
+                                        <input type="number" id="loan-months" value="0" min="0" max="11">
+                                        <span class="input-suffix">months</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="interest-rate"><i class="fas fa-percentage"></i> Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="interest-rate" value="5" min="0" max="100" step="0.001" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="compound-frequency"><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="compound-frequency">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="payment-frequency"><i class="fas fa-calendar-check"></i> Payment Frequency</label>
+                                <select id="payment-frequency">
+                                    <option value="12">Monthly</option>
+                                    <option value="26">Bi-weekly</option>
+                                    <option value="52">Weekly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Payment
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="results-card" id="amortized-results" style="display: none;">
+                        <h3><i class="fas fa-chart-pie"></i> Calculation Results</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Payment Amount</span>
+                                <span class="result-value" id="payment-amount">$0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Payments</span>
+                                <span class="result-value" id="total-payments">$0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Interest</span>
+                                <span class="result-value" id="total-interest">$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="amortized-chart"></canvas>
+                        </div>
+                        
+                        <button class="show-table-btn" id="show-amortization-table">
+                            <i class="fas fa-table"></i> View Amortization Schedule
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deferred Payment Calculator -->
+            <div class="calculator-section" id="deferred-calculator">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-hourglass-half"></i> Deferred Payment Loan Calculator</h2>
+                        <p class="description">Calculate lump sum payment due at loan maturity</p>
+                        
+                        <form class="calculator-form" id="deferred-form">
+                            <div class="form-group">
+                                <label for="deferred-amount"><i class="fas fa-dollar-sign"></i> Loan Amount</label>
+                                <input type="number" id="deferred-amount" value="100000" min="1" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deferred-years"><i class="fas fa-calendar-alt"></i> Loan Term</label>
+                                    <div class="input-group">
+                                        <input type="number" id="deferred-years" value="10" min="0" max="50">
+                                        <span class="input-suffix">years</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deferred-months">Additional Months</label>
+                                    <div class="input-group">
+                                        <input type="number" id="deferred-months" value="0" min="0" max="11">
+                                        <span class="input-suffix">months</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="deferred-rate"><i class="fas fa-percentage"></i> Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="deferred-rate" value="5" min="0" max="100" step="0.001" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="deferred-compound"><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="deferred-compound">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Maturity Amount
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="results-card" id="deferred-results" style="display: none;">
+                        <h3><i class="fas fa-chart-pie"></i> Calculation Results</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Amount Due at Maturity</span>
+                                <span class="result-value" id="maturity-amount">$0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Interest</span>
+                                <span class="result-value" id="deferred-interest">$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="deferred-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bond Calculator -->
+            <div class="calculator-section" id="bond-calculator">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-certificate"></i> Bond Calculator</h2>
+                        <p class="description">Calculate initial loan value based on predetermined face value</p>
+                        
+                        <form class="calculator-form" id="bond-form">
+                            <div class="form-group">
+                                <label for="face-value"><i class="fas fa-dollar-sign"></i> Face Value (Amount Due at Maturity)</label>
+                                <input type="number" id="face-value" value="100000" min="1" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="bond-years"><i class="fas fa-calendar-alt"></i> Loan Term</label>
+                                    <div class="input-group">
+                                        <input type="number" id="bond-years" value="10" min="0" max="50">
+                                        <span class="input-suffix">years</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bond-months">Additional Months</label>
+                                    <div class="input-group">
+                                        <input type="number" id="bond-months" value="0" min="0" max="11">
+                                        <span class="input-suffix">months</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bond-rate"><i class="fas fa-percentage"></i> Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="bond-rate" value="5" min="0" max="100" step="0.001" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bond-compound"><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="bond-compound">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Present Value
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="results-card" id="bond-results" style="display: none;">
+                        <h3><i class="fas fa-chart-pie"></i> Calculation Results</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Present Value (Amount Received)</span>
+                                <span class="result-value" id="present-value">$0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Interest</span>
+                                <span class="result-value" id="bond-interest">$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="bond-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Amortization Table Modal -->
+        <div class="modal" id="amortization-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-table"></i> Amortization Schedule</h3>
+                    <button class="close-modal" id="close-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        <table id="amortization-table">
+                            <thead>
+                                <tr>
+                                    <th>Payment #</th>
+                                    <th>Payment Amount</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

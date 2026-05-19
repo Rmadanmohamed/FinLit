@@ -1,0 +1,301 @@
+/**
+ * Digital Financial Literacy & Inclusion Platform
+ * Accessibility Stylesheet - Improves contrast and readability
+ */
+
+/* High Contrast Text Improvements */
+.high-contrast-text {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+.dark-contrast-text {
+    color: #121212 !important;
+    text-shadow: none !important;
+}
+
+/* Improved Backgrounds for Readability */
+.contrast-bg {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(5px) !important;
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+}
+
+.light-contrast-bg {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(5px) !important;
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+}
+
+/* Account Section Specific Improvements */
+.account-section {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.account-section h2, 
+.account-section h3 {
+    color: var(--dark-color) !important;
+    text-shadow: none !important;
+}
+
+.account-section p,
+.account-section label {
+    color: var(--dark-color) !important;
+}
+
+/* Form Accessibility Improvements */
+.form-group label {
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+input, select, textarea, button {
+    font-size: 1rem !important;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus, 
+button:focus {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+}
+
+/* Button Accessibility */
+.btn {
+    font-weight: 600 !important;
+    min-height: 44px !important; /* Minimum touch target size */
+    min-width: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4a6cf7, #3b5fe2) !important; /* Darker blue for better contrast */
+    color: white !important;
+}
+
+.btn-outline {
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    color: white !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Navigation Accessibility */
+.main-nav a {
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1rem !important;
+    position: relative !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.main-nav a:hover,
+.main-nav a:focus,
+.main-nav a.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* Focus visible utility */
+.focus-visible:focus {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+}
+
+/* Section backgrounds for better readability */
+.features, 
+.assessment, 
+.tools, 
+.resources, 
+.analytics {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    border-radius: var(--border-radius-lg);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-lg);
+}
+
+/* Feature cards with improved contrast */
+.feature-card {
+    background: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.feature-card h3 {
+    color: var(--primary-dark) !important;
+}
+
+.feature-card p {
+    color: var(--dark-color) !important;
+}
+
+/* Hero section improvements */
+.hero-title {
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+    font-weight: 400 !important;
+}
+
+/* Section titles with better contrast */
+.section-title {
+    color: var(--dark-color) !important;
+    text-shadow: none !important;
+}
+
+/* Improved table contrast */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+}
+
+th {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    text-align: left;
+    padding: 0.75rem !important;
+}
+
+td {
+    background-color: white !important;
+    color: var(--dark-color) !important;
+    padding: 0.75rem !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+tr:nth-child(even) td {
+    background-color: #f8f9fa !important;
+}
+
+/* Improved contrast for links */
+a {
+    color: var(--primary-dark) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 2px !important;
+}
+
+a:hover, a:focus {
+    color: var(--primary-color) !important;
+    text-decoration: underline !important;
+}
+
+/* Specific fixes for the account section */
+#account {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+#account h2, 
+#account h3 {
+    color: var(--dark-color) !important;
+    text-shadow: none !important;
+}
+
+#account p {
+    color: var(--dark-color) !important;
+}
+
+/* Login/Register section improvements */
+.login-register-container {
+    background-color: white !important;
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.login-register-tabs {
+    display: flex;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--gray-color);
+}
+
+.login-register-tab {
+    padding: var(--spacing-md);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--gray-dark) !important;
+    position: relative;
+}
+
+.login-register-tab.active {
+    color: var(--primary-color) !important;
+}
+
+.login-register-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+.login-register-content {
+    padding: var(--spacing-md) 0;
+}
+
+.login-form,
+.register-form {
+    display: none;
+}
+
+.login-form.active,
+.register-form.active {
+    display: block;
+}
+
+/* Accessibility announcement for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Improved focus styles for keyboard navigation */
+*:focus-visible {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+}

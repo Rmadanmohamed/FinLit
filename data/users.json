@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": "user_1",
+      "username": "demo_user",
+      "email": "demo@example.com",
+      "password": "password123",
+      "createdAt": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user_2",
+      "username": "john_doe",
+      "email": "john@example.com",
+      "password": "securepass",
+      "createdAt": "2023-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "user_3",
+      "username": "jane_smith",
+      "email": "jane@example.com",
+      "password": "jane123",
+      "createdAt": "2023-02-01T00:00:00.000Z"
+    }
+  ]
+}

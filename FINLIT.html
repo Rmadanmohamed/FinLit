@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Financial Literacy & Inclusion Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for dynamic charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Enhanced Animations -->
+    <script src="js/enhanced-animations.js" defer></script>
+    <!-- Navigation Enhancements -->
+    <script src="js/navigation.js" defer></script>
+    <!-- Dynamic Charts -->
+    <script src="js/charts.js" defer></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <h1>FinLit<span>Egypt</span></h1>
+      </div>
+
+      <nav class="main-nav">
+        <ul>
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#assessment" class="nav-link">Assessment</a></li>
+          <li><a href="#tools" class="nav-link">Financial Tools</a></li>
+          <li><a href="#resources" class="nav-link">Resources</a></li>
+          <li><a href="#analytics" class="nav-link">Analytics</a></li>
+          <li><a href="#account" class="nav-link">Account</a></li>
+          <li><a href="#history" class="nav-link">History</a></li>
+        </ul>
+        <div class="indicator"></div>
+      </nav>
+
+      <style>
+        .main-nav {
+          position: relative;
+        }
+
+        .main-nav ul {
+          list-style: none;
+          display: flex;
+          gap: 20px;
+          padding: 0;
+          margin: 0;
+          position: relative;
+        }
+
+        .nav-link {
+          text-decoration: none;
+          color: black;
+          padding-bottom: 4px;
+          position: relative;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link.active {
+          color: blue;
+        }
+
+        .indicator {
+          position: absolute;
+          bottom: 0;
+          height: 2px;
+          background: blue;
+          transition: all 0.3s ease;
+          width: 0;
+          left: 0;
+        }
+      </style>
+
+      <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        const indicator = document.querySelector('.indicator');
+        const sections = document.querySelectorAll('section');
+
+        function updateIndicator(link) {
+          const rect = link.getBoundingClientRect();
+          const navRect = link.closest('ul').getBoundingClientRect();
+          indicator.style.width = rect.width + 'px';
+          indicator.style.left = (rect.left - navRect.left) + 'px';
+        }
+
+        function clearActive() {
+          navLinks.forEach(link => link.classList.remove('active'));
+        }
+
+        function getCurrentSection() {
+          let index = -1;
+          sections.forEach((section, i) => {
+            const top = section.getBoundingClientRect().top;
+            if (top <= window.innerHeight / 2) {
+              index = i;
+            }
+          });
+          return index >= 0 ? navLinks[index] : null;
+        }
+
+        function handleScroll() {
+          const currentLink = getCurrentSection();
+          if (currentLink) {
+            clearActive();
+            currentLink.classList.add('active');
+            updateIndicator(currentLink);
+          }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleScroll);
+        window.addEventListener('load', () => {
+          const currentLink = getCurrentSection() || navLinks[0];
+          currentLink.classList.add('active');
+          updateIndicator(currentLink);
+        });
+
+        navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            clearActive();
+            link.classList.add('active');
+            updateIndicator(link);
+          });
+        });
+      </script>
+
+      <div class="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </header>
+
+
+   <!-- Hero Section -->
+<section id="home" class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Empower Your Financial Future</h1>
+      <p class="hero-subtitle">Discover the world of digital financial services and take control of your financial journey</p>
+      <div class="hero-buttons">
+        <a href="#assessment" id="take-assessment-btn" class="btn btn-primary">Take Assessment</a>
+        <a href="#account" class="btn btn-outline">Open Bank Account</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="images/financial_chart.jpeg" alt="Financial Growth Chart">
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('take-assessment-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const section = document.getElementById('assessment');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Digital Financial Literacy Matters</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Access Anywhere</h3>
+                    <p>Manage your finances from anywhere using digital banking and payment services.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Enhanced Security</h3>
+                    <p>Digital financial services offer secure ways to manage and protect your money.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Better Decisions</h3>
+                    <p>Access tools and information to make informed financial decisions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Financial Inclusion</h3>
+                    <p>Participate in the formal financial system and access essential services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Assessment Section -->
+    <section id="assessment" class="assessment">
+        <div class="container">
+            <h2 class="section-title">Assess Your Digital Financial Literacy</h2>
+            <p class="section-description"style="color: black;">Take this quick assessment to understand your current level of digital financial literacy and receive personalized recommendations.</p>
+            
+            <div class="assessment-container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step 1: Personal Information -->
+                <div class="assessment-step active" data-step="1">
+                    <h3>Personal Information</h3>
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="range" id="age" min="18" max="80" value="30">
+                        <span id="age-value">30</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="gender" value="male">
+                                Male
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="female">
+                                Female
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="other">
+                                Other
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="education">Education Level</label>
+                        <select id="education">
+                            <option value="">Select education level</option>
+                            <option value="primary">Primary Education</option>
+                            <option value="secondary">Secondary Education</option>
+                            <option value="university">University Degree</option>
+                            <option value="postgraduate">Postgraduate Degree</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Digital Literacy Questions -->
+                <div class="assessment-step" data-step="2">
+                    <h3>Digital Financial Literacy</h3>
+                    <div class="question">
+                        <p>1. How comfortable are you with using mobile banking applications?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q1" value="1">
+                                Not comfortable at all
+                            </label>
+                            <label>
+                                <input type="radio" name="q1" value="3">
+                                Somewhat comfortable
+                            </label>
+                            <label>
+                                <input type="radio" name="q1" value="5">
+                                Very comfortable
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>2. How often do you use digital payment methods (e.g., mobile wallets, online transfers)?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q2" value="1">
+                                Never or rarely
+                            </label>
+                            <label>
+                                <input type="radio" name="q2" value="3">
+                                Sometimes
+                            </label>
+                            <label>
+                                <input type="radio" name="q2" value="5">
+                                Frequently
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>3. How would you rate your understanding of digital financial security practices?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q3" value="1">
+                                Limited understanding
+                            </label>
+                            <label>
+                                <input type="radio" name="q3" value="3">
+                                Basic understanding
+                            </label>
+                            <label>
+                                <input type="radio" name="q3" value="5">
+                                Strong understanding
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Financial Literacy Questions -->
+                <div class="assessment-step" data-step="3">
+                    <h3>General Financial Literacy</h3>
+                    <div class="question">
+                        <p>4. How would you rate your understanding of interest rates and how they affect loans and savings?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q4" value="1">
+                                Limited understanding
+                            </label>
+                            <label>
+                                <input type="radio" name="q4" value="3">
+                                Basic understanding
+                            </label>
+                            <label>
+                                <input type="radio" name="q4" value="5">
+                                Strong understanding
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>5. How often do you create and follow a personal budget?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q5" value="1">
+                                Never or rarely
+                            </label>
+                            <label>
+                                <input type="radio" name="q5" value="3">
+                                Sometimes
+                            </label>
+                            <label>
+                                <input type="radio" name="q5" value="5">
+                                Regularly
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>6. How confident are you in planning for long-term financial goals?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q6" value="1">
+                                Not confident
+                            </label>
+                            <label>
+                                <input type="radio" name="q6" value="3">
+                                Somewhat confident
+                            </label>
+                            <label>
+                                <input type="radio" name="q6" value="5">
+                                Very confident
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Financial Inclusion Questions -->
+                <div class="assessment-step" data-step="4">
+                    <h3>Financial Inclusion</h3>
+                    <div class="question">
+                        <p>7. Do you have a bank account?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q7" value="1">
+                                No
+                            </label>
+                            <label>
+                                <input type="radio" name="q7" value="5">
+                                Yes
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>8. How easy is it for you to access financial services in your area?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q8" value="1">
+                                Difficult
+                            </label>
+                            <label>
+                                <input type="radio" name="q8" value="3">
+                                Somewhat easy
+                            </label>
+                            <label>
+                                <input type="radio" name="q8" value="5">
+                                Very easy
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <p>9. Have you ever used any formal financial products (e.g., loans, insurance, investments)?</p>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="q9" value="1">
+                                Never
+                            </label>
+                            <label>
+                                <input type="radio" name="q9" value="3">
+                                One or two products
+                            </label>
+                            <label>
+                                <input type="radio" name="q9" value="5">
+                                Multiple products
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary submit-assessment">Submit</button>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Results -->
+                <div class="assessment-step" data-step="5">
+                    <h3>Your Financial Literacy Assessment Results</h3>
+                    <div class="assessment-results">
+                        <div class="overall-score">
+                            <h4>Overall Score</h4>
+                            <div class="score-circle">
+                                <span id="overall-score">0.0%</span>
+                            </div>
+                        </div>
+                        <div class="score-breakdown">
+                            <div class="score-category">
+                                <h4>Digital Literacy</h4>
+                                <canvas id="digital-gauge" width="200" height="100"></canvas>
+                            </div>
+                            <div class="score-category">
+                                <h4>Financial Literacy</h4>
+                                <canvas id="financial-gauge" width="200" height="100"></canvas>
+                            </div>
+                            <div class="score-category">
+                                <h4>Financial Inclusion</h4>
+                                <canvas id="inclusion-gauge" width="200" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="recommendations">
+                            <h4>Personalized Recommendations</h4>
+                            <div id="recommendations-container"></div>
+                        </div>
+                        <div class="assessment-actions">
+                            <a href="#tools" class="btn btn-primary">Explore Financial Tools</a>
+                            <a href="#account" id="open-account-btn" class="btn btn-outline" style="display: none;">Open Bank Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Tools Section -->
+    <section id="tools" class="tools">
+        <div class="container">
+            <h2 class="section-title">Financial Tools</h2>
+            <p class="section-description"style="color: black;">Use these interactive tools to manage your finances effectively.</p>
+            
+            <div class="tabs">
+                <div class="tab-header">
+                    <div class="tab-item active" data-tab="budget">Budget Calculator</div>
+                    <div class="tab-item" data-tab="savings">Savings Calculator</div>
+                    <div class="tab-item" data-tab="loan">Loan Calculator</div>
+                </div>
+                
+                <div class="tab-content">
+                    <!-- Budget Calculator -->
+                    <div class="tab-pane active" id="budget-tab">
+                        <div class="loan-redirect-container">
+                            <div class="loan-redirect-content">
+                                <div class="loan-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <h3>Professional Budget Calculator</h3>
+                                <p>Plan your finances with our comprehensive budget calculator featuring detailed expense tracking and savings recommendations.</p>
+                                <a href="CALCULATORS/budget.html" class="loan-redirect-btn">
+                                    <span class="btn-text"style="color: white;">Go to FinLit Budget Calculator</span>
+                                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Savings Calculator -->
+                    <div class="tab-pane" id="savings-tab">
+                        <div class="loan-redirect-container">
+                            <div class="loan-redirect-content">
+                                <div class="loan-icon">
+                                    <i class="fas fa-piggy-bank"></i>
+                  </div>
+                  <h3>Professional Savings Calculator</h3>
+                  <p>Plan your financial future with our advanced savings calculator featuring compound interest calculations and detailed growth projections.</p>
+                  <a href="CALCULATORS/savings.html" class="loan-redirect-btn">
+                    <span class="btn-text"style="color: white;">Go to FinLit Savings Calculator</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+         <!-- Loan Calculator -->
+<div class="tab-pane" id="loan-tab">
+  <div class="loan-redirect-container">
+    <div class="loan-redirect-content">
+      <div class="loan-icon">
+        <i class="fas fa-calculator"></i>
+      </div>
+      <h3>Professional Loan Calculator</h3>
+      <p>Access our advanced loan calculator with detailed amortization schedules and comprehensive financial analysis.</p>
+      <a href="CALCULATORS/loan.html" class="loan-redirect-btn">
+<span class="btn-text" style="color: white;">Go to FinLit Loan Calculator</span>
+        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.loan-redirect-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 40px 20px;
+}
+
+.loan-redirect-content {
+  text-align: center;
+  max-width: 500px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60px 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.loan-redirect-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.loan-redirect-content:hover::before {
+  animation: shine 1.5s ease-in-out;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.loan-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.loan-redirect-content h3 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.loan-redirect-content p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.loan-redirect-btn {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.loan-redirect-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.loan-redirect-btn:hover::before {
+  left: 100%;
+}
+
+.loan-redirect-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+}
+
+.loan-redirect-btn:active {
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  transition: transform 0.3s ease;
+}
+
+.loan-redirect-btn:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+  .loan-redirect-content {
+    padding: 40px 30px;
+  }
+  
+  .loan-icon {
+    font-size: 3rem;
+  }
+  
+  .loan-redirect-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .loan-redirect-content p {
+    font-size: 1rem;
+  }
+}
+</style>
+
+<script>
+document.getElementById('go-to-loan-calculator').addEventListener('click', function() {
+  // Add a smooth transition effect before redirect
+  this.style.transform = 'scale(0.95)';
+  this.innerHTML = '<span class="btn-text">Redirecting...</span><span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span>';
+  
+  setTimeout(() => {
+    window.location.href = 'LOAN CALCULATOR WEBSITE/loan.html';
+  }, 800);
+});
+
+document.getElementById('go-to-budget-calculator').addEventListener('click', function() {
+  this.style.transform = 'scale(0.95)';
+  this.innerHTML = '<span class="btn-text">Redirecting...</span><span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span>';
+  
+  setTimeout(() => {
+    window.location.href = 'LOAN CALCULATOR WEBSITE/budget.html';
+  }, 800);
+});
+
+document.getElementById('go-to-savings-calculator').addEventListener('click', function() {
+  this.style.transform = 'scale(0.95)';
+  this.innerHTML = '<span class="btn-text">Redirecting...</span><span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span>';
+  
+  setTimeout(() => {
+    window.location.href = 'LOAN CALCULATOR WEBSITE/savings.html';
+  }, 800);
+});
+</script>
+
+    </section>
+
+    <!-- Bank Account Opening Section -->
+    <section id="account" class="account">
+        <div class="container">
+            <h2 class="section-title">Open a Bank Account from Home</h2>
+            <p class="section-description">Complete the following steps to open a bank account without visiting a branch.</p>
+            
+            <div class="account-container">
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step 1: Bank Selection -->
+                <div class="account-step active" data-step="1">
+                    <h3>Select a Bank</h3>
+                    <p>Choose from the following banks to open your account:</p>
+                    
+                    <div class="bank-options">
+                        <!-- Bank options will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Personal Information -->
+                <div class="account-step" data-step="2">
+                    <h3>Personal Information</h3>
+                    <div class="form-group">
+                        <label for="full-name">Full Name (as on ID)</label>
+                        <input type="text" id="full-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="national-id">National ID Number</label>
+                        <input type="text" id="national-id" placeholder="14-digit national ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile-number">Mobile Number</label>
+                        <input type="tel" id="mobile-number" placeholder="e.g., 01XXXXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Financial Information -->
+                <div class="account-step" data-step="3">
+                    <h3>Financial Information</h3>
+                    <div class="form-group">
+                        <label for="occupation">Occupation</label>
+                        <input type="text" id="occupation" placeholder="Enter your occupation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employer">Employer/Business Name</label>
+                        <input type="text" id="employer" placeholder="Enter employer or business name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="monthly-income">Monthly Income (EGP)</label>
+                        <input type="range" id="monthly-income" min="1000" max="50000" step="500" value="5000">
+                        <span id="monthly-income-value">5,000</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Type</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="account-type" value="savings" checked>
+                                Savings Account
+                            </label>
+                            <label>
+                                <input type="radio" name="account-type" value="current">
+                                Current Account
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Document Upload -->
+                <div class="account-step" data-step="4">
+                    <h3>Document Upload</h3>
+                    <p>Please upload clear photos or scans of the following documents:</p>
+                    
+                    <div class="document-list">
+                        <div class="document-item">
+                            <div class="document-info">
+                                <h4>National ID (Front & Back)</h4>
+                                <p>Clear photo or scan of both sides</p>
+                            </div>
+                            <div class="document-actions">
+                                <button class="btn btn-outline upload-btn">Upload</button>
+                            </div>
+                            <div class="document-status">
+                                <i class="fas fa-check-circle status-icon"></i>
+                            </div>
+                        </div>
+                        <div class="document-item">
+                            <div class="document-info">
+                                <h4>Recent Utility Bill</h4>
+                                <p>For address verification (last 3 months)</p>
+                            </div>
+                            <div class="document-actions">
+                                <button class="btn btn-outline upload-btn">Upload</button>
+                            </div>
+                            <div class="document-status">
+                                <i class="fas fa-check-circle status-icon"></i>
+                            </div>
+                        </div>
+                        <div class="document-item">
+                            <div class="document-info">
+                                <h4>Personal Photo</h4>
+                                <p>Recent passport-sized photo</p>
+                            </div>
+                            <div class="document-actions">
+                                <button class="btn btn-outline upload-btn">Upload</button>
+                            </div>
+                            <div class="document-status">
+                                <i class="fas fa-check-circle status-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary next-step">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Terms and Conditions -->
+                <div class="account-step" data-step="5">
+                    <h3>Terms and Conditions</h3>
+                    <div class="terms-container">
+                        <p>By opening an account, you agree to the following terms and conditions:</p>
+                        <ul>
+                            <li>I confirm that all information provided is accurate and complete.</li>
+                            <li>I authorize the bank to verify my information with relevant authorities.</li>
+                            <li>I understand that my application may be rejected if any information is found to be false.</li>
+                            <li>I agree to the bank's terms of service, privacy policy, and fee schedule.</li>
+                            <li>I understand that I may need to visit a branch to complete the verification process.</li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms-checkbox">
+                            I have read and agree to the terms and conditions
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-outline prev-step">Previous</button>
+                        <button class="btn btn-primary" id="submit-application" disabled>Submit Application</button>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Confirmation -->
+                <div class="account-step" data-step="6">
+                    <div class="confirmation">
+                        <div class="confirmation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Application Submitted Successfully!</h3>
+                        <p>Your application to open an account with <span id="selected-bank">National Bank of Egypt</span> has been submitted successfully.</p>
+                        <div class="confirmation-details">
+                            <div class="detail-item">
+                                <span>Reference Number:</span>
+                                <span id="reference-number">123456</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Submission Date:</span>
+                                <span id="submission-date"></span>
+                            </div>
+                        </div>
+                        <div class="next-steps">
+                            <h4>Next Steps:</h4>
+                            <ol>
+                                <li>You will receive a confirmation SMS and email within 24 hours.</li>
+                                <li>A bank representative will contact you to verify your information.</li>
+                                <li>You may be required to visit a branch for final verification.</li>
+                                <li>Once approved, your account details will be sent to you.</li>
+                            </ol>
+                        </div>
+                        <div class="contact-info">
+                            <p>For any inquiries, please contact <span id="selected-bank">National Bank of Egypt</span> customer service at <span id="bank-hotline">19623</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+<section id="resources" class="resources">
+  <div class="container">
+    <h2 class="section-title">Financial Resources</h2>
+    <p class="section-description"style="color: black;">Explore these resources to enhance your financial knowledge and access services.</p>
+
+    <div class="tabs">
+      <div class="tab-header">
+        <div class="tab-item active" data-tab="banks">Banks</div>
+        <div class="tab-item" data-tab="education">Financial Education</div>
+        <div class="tab-item" data-tab="digital">Digital Services</div>
+      </div>
+
+      <div class="tab-content">
+        <!-- Banks -->
+        <div class="tab-pane active" id="banks-tab">
+          <h3>Banking Services in Egypt</h3>
+          <div class="resources-grid">
+            <a href="https://www.cbe.org.eg/en/Pages/default.aspx" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/cbe.png" alt="CBE" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/en/3/32/Central_Bank_of_Egypt_Logo.png'">
+            </a>
+            <a href="https://www.ebi.gov.eg" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/ebi.png" alt="EBI" onerror="this.onerror=null;this.src='https://www.ebi.gov.eg/_layouts/15/EBI.Portal2018/images/logo.png'">
+            </a>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="tab-pane" id="education-tab">
+          <h3>Financial Education Resources</h3>
+          <div class="resources-grid">
+            <a href="https://fra.gov.eg/en" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/fra.png" alt="FRA" onerror="this.onerror=null;this.src='https://fra.gov.eg/images/fra-logo-en.png'">
+            </a>
+            <a href="https://meeza-eg.com/ar/meeza-e-wallet-ar/" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/meeza.png" alt="Meeza" onerror="this.onerror=null;this.src='https://www.meeza.eg/assets/img/logo.png'">
+            </a>
+          </div>
+        </div>
+
+        <!-- Digital -->
+        <div class="tab-pane" id="digital-tab">
+          <h3>Digital Financial Services</h3>
+          <div class="resources-grid">
+            <a href="https://www.fawry.com" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/fawry.png" alt="Fawry" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/8/88/Fawry_logo.png'">
+            </a>
+            <a href="https://www.vodafone.com.eg" target="_blank" rel="noopener noreferrer">
+              <img src="images/resources/vodafone.png" alt="Vodafone" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/6/6b/Vodafone_Egypt_logo.svg'">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.resources-grid img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  padding: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.resources-grid img:hover {
+  transform: scale(1.05);
+}
+.tab-header {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.tab-item {
+  padding: 8px 16px;
+  border-bottom: 2px solid transparent;
+  user-select: none;
+}
+.tab-item.active {
+  border-bottom: 2px solid black;
+}
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+</style>
+
+<script>
+document.querySelectorAll('.tab-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+  });
+});
+
+// Check login status and update account and history sections
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if AuthManager is available
+  if (typeof AuthManager !== 'undefined') {
+    const authManager = new AuthManager();
+    
+    // Update login status in account section
+    function updateLoginStatus() {
+      const loggedInElement = document.getElementById('logged-in');
+      const notLoggedInElement = document.getElementById('not-logged-in');
+      const historyLoginMessage = document.getElementById('history-login-message');
+      const historyContent = document.getElementById('history-content');
+      const userNameElement = document.getElementById('user-name');
+      
+      if (authManager.isLoggedIn()) {
+        const user = authManager.getCurrentUser();
+        
+        // Update account section
+        if (loggedInElement && notLoggedInElement && userNameElement) {
+          userNameElement.textContent = user.username || 'User';
+          loggedInElement.style.display = 'block';
+          notLoggedInElement.style.display = 'none';
+        }
+        
+        // Update history section
+        if (historyLoginMessage && historyContent) {
+          historyLoginMessage.style.display = 'none';
+          historyContent.style.display = 'block';
+          
+          // Load user's saved calculations and assessment results
+          loadUserHistory(user);
+        }
+      } else {
+        // Update account section
+        if (loggedInElement && notLoggedInElement) {
+          loggedInElement.style.display = 'none';
+          notLoggedInElement.style.display = 'block';
+        }
+        
+        // Update history section
+        if (historyLoginMessage && historyContent) {
+          historyLoginMessage.style.display = 'block';
+          historyContent.style.display = 'none';
+        }
+      }
+    }
+    
+    // Load user's history data
+    function loadUserHistory(user) {
+      // This is a placeholder function that would normally fetch data from a server
+      // For demo purposes, we'll use mock data
+      
+      // Update assessment results
+      document.getElementById('assessment-date').textContent = '15/06/2023';
+      document.getElementById('assessment-score').textContent = '78/100';
+      document.getElementById('knowledge-score').textContent = '82/100';
+      document.getElementById('behavior-score').textContent = '75/100';
+      document.getElementById('attitude-score').textContent = '77/100';
+      
+      // Update budget calculations
+      document.getElementById('budget-date').textContent = '20/06/2023';
+      document.getElementById('budget-income').textContent = 'EGP 8,500';
+      document.getElementById('budget-expenses').textContent = 'EGP 6,200';
+      document.getElementById('budget-savings').textContent = 'EGP 2,300';
+      
+      // Update savings calculations
+      document.getElementById('savings-date').textContent = '22/06/2023';
+      document.getElementById('savings-initial').textContent = 'EGP 10,000';
+      document.getElementById('savings-monthly').textContent = 'EGP 1,000';
+      document.getElementById('savings-final').textContent = 'EGP 82,000';
+      
+      // Update loan calculations
+      document.getElementById('loan-date').textContent = '25/06/2023';
+      document.getElementById('loan-amount').textContent = 'EGP 100,000';
+      document.getElementById('loan-payment').textContent = 'EGP 2,225';
+      document.getElementById('loan-interest').textContent = 'EGP 33,500';
+    }
+    
+    // Add auth listener to update UI when auth state changes
+    authManager.addAuthListener(function(user) {
+      updateLoginStatus();
+    });
+    
+    // Initial update
+    updateLoginStatus();
+  }
+});
+</script>
+
+
+    <!-- Analytics Section -->
+<!-- Analytics Section --> 
+<section id="analytics" class="analytics"> 
+  <div class="container"> 
+    <h2 class="section-title">Financial Inclusion Analytics</h2> 
+    <p class="section-description" style="color: black;">Explore data and trends related to financial inclusion in Egypt.</p> 
+
+    <div class="analytics-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"> 
+      <div class="analytics-card"> 
+        <h3>Financial Inclusion Trends</h3> 
+        <div class="chart-container" style="position: relative; height: 300px;"> 
+          <canvas id="inclusion-trends-chart" height="300"></canvas> 
+        </div> 
+        <p>Percentage of adults with access to financial services over time.</p> 
+      </div> 
+
+      <div class="analytics-card"> 
+        <h3>Financial Literacy by Education Level</h3> 
+        <div class="chart-container" style="position: relative; height: 300px;"> 
+          <canvas id="literacy-education-chart" height="300"></canvas> 
+        </div> 
+        <p>Comparison of financial literacy scores across different education levels.</p> 
+      </div> 
+
+      <div class="analytics-card"> 
+        <h3>Financial Inclusion Barriers</h3> 
+        <div class="chart-container" style="position: relative; height: 300px;"> 
+          <canvas id="barriers-chart" height="300"></canvas> 
+        </div> 
+        <p>Main barriers preventing people from accessing financial services.</p> 
+      </div> 
+
+      <div class="analytics-card"> 
+        <h3>Financial Inclusion by Age Group</h3> 
+        <div class="chart-container" style="position: relative; height: 300px;"> 
+          <canvas id="age-group-chart" height="300"></canvas> 
+        </div> 
+        <p>Adoption of financial services across different age groups.</p> 
+      </div> 
+    </div> 
+  </div> 
+</section>
+
+<!-- Account Section -->
+    <section id="account" class="account-section">
+        <div class="container">
+            <h2 class="section-title">Your FinLit Account</h2>
+            <p class="section-description">Manage your account, track your progress, and access your saved calculations.</p>
+            
+            <div class="account-card">
+                <div class="account-card-content">
+                    <div class="account-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Account Management</h3>
+                    <p>Access your personal account to manage your profile, view your assessment results, and track your financial progress over time.</p>
+                    <a href="account.html" class="account-btn">
+<span class="btn-text" style="color: black;">Go to Account Management</span>
+                        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="login-status">
+                <div class="not-logged-in" id="not-logged-in">
+                    <p>You are not logged in. <a href="account.html">Login or Register</a> to save your calculations and track your progress.</p>
+                </div>
+                <div class="logged-in" id="logged-in" style="display: none;">
+                    <p>Welcome back, <span id="user-name">User</span>! <a href="#history">View your saved calculations</a> or <a href="account.html">manage your account</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section id="history" class="history-section">
+        <div class="container">
+            <h2 class="section-title">Your Financial History</h2>
+            <p class="section-description">Track your progress and review your past calculations and assessment results.</p>
+            
+            <div class="history-login-message" id="history-login-message">
+                <div class="history-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Login to View Your History</h3>
+                <p>Please <a href="account.html">login or register</a> to view your financial history and saved calculations.</p>
+            </div>
+            
+            <div class="history-content" id="history-content" style="display: none;">
+                <div class="history-tabs">
+                    <button class="history-tab active" data-tab="assessments">Assessment Results</button>
+                    <button class="history-tab" data-tab="calculations">Saved Calculations</button>
+                    <button class="history-tab" data-tab="progress">Progress Tracking</button>
+                </div>
+                
+                <div class="history-tab-content active" id="assessments-content">
+                    <div class="history-card">
+                        <div class="history-card-header">
+                            <h3>Financial Literacy Assessment</h3>
+                            <span class="history-date">Date: <span id="assessment-date">--/--/----</span></span>
+                        </div>
+                        <div class="history-card-body">
+                            <div class="history-result">
+                                <span class="result-label">Overall Score:</span>
+                                <span class="result-value" id="assessment-score">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Knowledge Area:</span>
+                                <span class="result-value" id="knowledge-score">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Behavior Area:</span>
+                                <span class="result-value" id="behavior-score">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Attitude Area:</span>
+                                <span class="result-value" id="attitude-score">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="history-tab-content" id="calculations-content">
+                    <div class="history-card">
+                        <div class="history-card-header">
+                            <h3>Budget Calculator</h3>
+                            <span class="history-date">Date: <span id="budget-date">--/--/----</span></span>
+                        </div>
+                        <div class="history-card-body">
+                            <div class="history-result">
+                                <span class="result-label">Total Income:</span>
+                                <span class="result-value" id="budget-income">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Total Expenses:</span>
+                                <span class="result-value" id="budget-expenses">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Net Savings:</span>
+                                <span class="result-value" id="budget-savings">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-card">
+                        <div class="history-card-header">
+                            <h3>Savings Calculator</h3>
+                            <span class="history-date">Date: <span id="savings-date">--/--/----</span></span>
+                        </div>
+                        <div class="history-card-body">
+                            <div class="history-result">
+                                <span class="result-label">Initial Investment:</span>
+                                <span class="result-value" id="savings-initial">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Monthly Contribution:</span>
+                                <span class="result-value" id="savings-monthly">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Final Amount:</span>
+                                <span class="result-value" id="savings-final">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-card">
+                        <div class="history-card-header">
+                            <h3>Loan Calculator</h3>
+                            <span class="history-date">Date: <span id="loan-date">--/--/----</span></span>
+                        </div>
+                        <div class="history-card-body">
+                            <div class="history-result">
+                                <span class="result-label">Loan Amount:</span>
+                                <span class="result-value" id="loan-amount">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Monthly Payment:</span>
+                                <span class="result-value" id="loan-payment">--</span>
+                            </div>
+                            <div class="history-result">
+                                <span class="result-label">Total Interest:</span>
+                                <span class="result-value" id="loan-interest">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="history-tab-content" id="progress-content">
+                    <div class="progress-chart-container">
+                        <h3>Financial Literacy Progress</h3>
+                        <canvas id="progress-chart" width="800" height="400"></canvas>
+                    </div>
+                    
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <div class="progress-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Overall Progress</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="overall-progress" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-value">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-stat">
+                            <div class="progress-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Savings Goal</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="savings-progress" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-value">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-stat">
+                            <div class="progress-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="progress-info">
+                                <h4>Knowledge Improvement</h4>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="knowledge-progress" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <!-- Call to Action Section -->
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Take Control of Your Financial Future Today</h2>
+            <p>Start your journey towards financial literacy and inclusion with our tools and resources.</p>
+            <div class="cta-buttons">
+                <a href="#assessment" class="btn btn-primary" onclick="scrollToSection('assessment'); return false;">Take Assessment</a>
+                <a href="#account" class="btn btn-outline" onclick="scrollToSection('account'); return false;">Open Bank Account</a>
+            </div>
+        </div>
+        <div class="cta-image">
+            <img src="images/plant_coins.jpeg" alt="Financial Growth">
+        </div>
+    </div>
+</section>
+
+<script>
+function scrollToSection(id) {
+  const element = document.getElementById(id);
+  if (!element) return;
+
+  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  // تأخير بسيط عشان التنقل يخلص قبل التركيز
+  setTimeout(() => {
+    element.setAttribute('tabindex', '-1'); // لجعل العنصر قابل للتركيز
+    element.focus({ preventScroll: true });
+  }, 500);
+}
+</script>
+
+
+    <!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <h2>FinLit<span>Egypt</span></h2>
+        <p>Empowering financial literacy and inclusion in Egypt</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#home" class="scroll-link">Home</a></li>
+            <li><a href="#assessment" class="scroll-link">Assessment</a></li>
+            <li><a href="#tools" class="scroll-link">Financial Tools</a></li>
+            <li><a href="#resources" class="scroll-link">Resources</a></li>
+            <li><a href="#analytics" class="scroll-link">Analytics</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="#banks-tab" class="scroll-link">Banking Services</a></li>
+            <li><a href="#education-tab" class="scroll-link">Financial Education</a></li>
+            <li><a href="#digital-tab" class="scroll-link">Digital Services</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contact</h3>
+          <ul>
+            <li><a href="mailto:FinLitSupport@info.com">FinLitSupport@info.com</a></li>
+            <li><a href="tel:+2012345678910">+20 123 456 789 10</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 FinLitEgypt. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.scroll-link').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').substring(1);
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/enhanced-animations.js"></script>
+    <script src="js/calculators.js"></script>
+    <script src="js/assessment.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/resources.js"></script>
+</body>
+</html>

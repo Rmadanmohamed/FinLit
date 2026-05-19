@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Users | FinLit2025</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/account.css">
+    <link rel="stylesheet" href="css/registered_users.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js" defer></script>
+    <script src="js/database.js" defer></script>
+    <script src="js/registered_users.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="account-header">
+            <h1><i class="fas fa-users"></i> Registered Users</h1>
+            <p>View all registered users of FinLit2025 platform</p>
+            <div class="main-site-link">
+                <a href="FINLIT.html" class="back-to-main">
+                    <i class="fas fa-home"></i> Back to Main Site
+                </a>
+                <a href="account.html" class="back-to-account">
+                    <i class="fas fa-user-circle"></i> Account Management
+                </a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="calculator-layout">
+                <div class="calculator-card">
+                    <h2><i class="fas fa-user-friends"></i> User Directory</h2>
+                    <p class="description">All registered users of the FinLit2025 platform</p>
+                    
+                    <div class="user-search">
+                        <div class="form-group">
+                            <label><i class="fas fa-search"></i> Search Users</label>
+                            <input type="text" id="user-search" placeholder="Search by username or email...">
+                        </div>
+                    </div>
+
+                    <div class="users-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Registered Date</th>
+                                    <th>Calculations</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- User data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" id="no-users-message" style="display: none;">
+                        <i class="fas fa-users-slash"></i>
+                        <p>No users found matching your search criteria</p>
+                    </div>
+
+                    <div class="pagination">
+                        <button id="prev-page" class="pagination-btn" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="page-info">Page 1 of 1</span>
+                        <button id="next-page" class="pagination-btn" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2023 FinLit2025 - Financial Literacy & Inclusion Platform</p>
+                <div class="footer-links">
+                    <a href="FINLIT.html">Home</a>
+                    <a href="account.html">Account</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+</body>
+</html>

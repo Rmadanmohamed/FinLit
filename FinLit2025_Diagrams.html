@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinLit2025 Platform Diagrams</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            overflow: auto;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+        }
+        .diagram {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .entity-description {
+            margin-left: 20px;
+        }
+        .entity-description h4 {
+            margin-bottom: 5px;
+            color: #16a085;
+        }
+        .entity-description ul {
+            margin-top: 5px;
+        }
+        @media print {
+            body {
+                padding: 0;
+                font-size: 12pt;
+            }
+            pre {
+                page-break-inside: avoid;
+                border: 1px solid #ddd;
+                font-size: 10pt;
+            }
+            h2 {
+                page-break-before: always;
+            }
+            h2:first-of-type {
+                page-break-before: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>FinLit2025 Platform Diagrams</h1>
+
+    <h2>Data Flow Diagram (DFD)</h2>
+
+    <h3>DFD Level 0 (Context Diagram)</h3>
+    <pre class="diagram">
++-------------+                                  +-------------+
+|             |  Register/Login                 |             |
+|    User     | --------------------------->    |  FinLit2025 |
+|             |                                  |   Platform  |
+|             | <---------------------------    |             |
++-------------+  Assessment Results/            +-------------+
+                  Recommendations/                     ^
+                  Calculation Results                  |
+                                                       |
+                                                       |
+                                                       v
+                                                +-------------+
+                                                |             |
+                                                |    Admin    |
+                                                |             |
+                                                +-------------+
+                                                 Manage Content/
+                                                 View Analytics
+    </pre>
+
+    <h3>DFD Level 1</h3>
+    <pre class="diagram">
+                                +-------------------+
+                                |                   |
+                                |  User Database    |
+                                |                   |
+                                +-------------------+
+                                        ^   |
+                                        |   |
+                                        |   v
++-------------+    Register    +-------------------+
+|             | ------------> |                   |
+|    User     |               | User Registration  |
+|             | <------------ |   & Management    |
++-------------+  User Profile +-------------------+
+        |                             ^
+        |                             |
+        |                             |
+        |       +-------------------+ |
+        |       |                   | |
+        |       |  Authentication   | |
+        +-----> |      System      | |
+        |       |                   | |
+        |       +-------------------+ |
+        |               |             |
+        |               v             |
+        |       +-------------------+ |
+        |       |                   | |
+        +-----> |  Assessment      | |
+        |       |     System       | |
+        |       |                   | |
+        |       +-------------------+ |
+        |               |             |
+        |               v             |
+        |       +-------------------+ |
+        |       |                   | |
+        +-----> |  Recommendation   | |
+        |       |     Engine        | |
+        |       |                   | |
+        |       +-------------------+ |
+        |               |             |
+        |               v             |
+        |       +-------------------+ |
+        |       |                   | |
+        +-----> |    Financial     | |
+        |       |   Calculators    | |
+        |       |                   | |
+        |       +-------------------+ |
+        |               |             |
+        |               v             |
+        |       +-------------------+ |
+        |       |                   | |
+        +-----> |   Educational    | |
+        |       |    Resources     | |
+        |       |                   | |
+        |       +-------------------+ |
+        |               |             |
+        |               v             |
+        |       +-------------------+ |
+        |       |                   | |
+        +-----> |    Progress      |--+
+                |    Tracking      |
+                |                   |
+                +-------------------+
+                        |
+                        v
+                +-------------------+
+                |                   |
+                |    Analytics      |
+                |    Dashboard      |
+                |                   |
+                +-------------------+
+                        ^
+                        |
++-------------+         |
+|             |         |
+|    Admin    |---------+
+|             |
++-------------+
+    </pre>
+
+    <h2>Entity Relationship Diagram (ERD)</h2>
+    <pre class="diagram">
++---------------+       +----------------+       +----------------+
+|     User      |       |   Assessment   |       |  Calculation   |
++---------------+       +----------------+       +----------------+
+| PK: id        |<----->| PK: id         |       | PK: id         |
+| username      |       | FK: userId     |       | FK: userId     |
+| email         |       | digitalScore   |       | calculationType|
+| password      |       | financialScore |       | title          |
+| createdAt     |       | inclusionScore |       | data (JSON)    |
+| savedCalcs[]  |       | totalScore     |       | createdAt      |
++---------------+       | createdAt      |       +----------------+
+        |               +----------------+               ^
+        |                      ^                         |
+        |                      |                         |
+        +----------------------+-------------------------+
+                               |
+                               v
+                     +------------------+
+                     | Recommendation   |
+                     +------------------+
+                     | PK: id           |
+                     | FK: assessmentId |
+                     | category         |
+                     | title            |
+                     | description      |
+                     | resources[]      |
+                     +------------------+
+                               ^
+                               |
+                               v
+                     +------------------+
+                     |    Resource      |
+                     +------------------+
+                     | PK: id           |
+                     | title            |
+                     | type             |
+                     | content          |
+                     | category         |
+                     | createdAt        |
+                     | updatedAt        |
+                     +------------------+
+    </pre>
+
+    <h2>Entity Descriptions</h2>
+
+    <div class="entity-description">
+        <h4>User</h4>
+        <ul>
+            <li><strong>id</strong>: Unique identifier for the user</li>
+            <li><strong>username</strong>: User's display name</li>
+            <li><strong>email</strong>: User's email address (used for login)</li>
+            <li><strong>password</strong>: User's password (hashed)</li>
+            <li><strong>createdAt</strong>: Timestamp when the user account was created</li>
+            <li><strong>savedCalculations</strong>: Array of saved calculation results</li>
+        </ul>
+    </div>
+
+    <div class="entity-description">
+        <h4>Assessment</h4>
+        <ul>
+            <li><strong>id</strong>: Unique identifier for the assessment</li>
+            <li><strong>userId</strong>: Foreign key referencing the User who took the assessment</li>
+            <li><strong>digitalScore</strong>: Score for digital literacy section (0-100)</li>
+            <li><strong>financialScore</strong>: Score for financial literacy section (0-100)</li>
+            <li><strong>inclusionScore</strong>: Score for financial inclusion section (0-100)</li>
+            <li><strong>totalScore</strong>: Overall assessment score (average of the three scores)</li>
+            <li><strong>createdAt</strong>: Timestamp when the assessment was completed</li>
+        </ul>
+    </div>
+
+    <div class="entity-description">
+        <h4>Calculation</h4>
+        <ul>
+            <li><strong>id</strong>: Unique identifier for the calculation</li>
+            <li><strong>userId</strong>: Foreign key referencing the User who created the calculation</li>
+            <li><strong>calculationType</strong>: Type of calculation (budget, loan, savings)</li>
+            <li><strong>title</strong>: User-provided title for the calculation</li>
+            <li><strong>data</strong>: JSON object containing calculation parameters and results</li>
+            <li><strong>createdAt</strong>: Timestamp when the calculation was created</li>
+        </ul>
+    </div>
+
+    <div class="entity-description">
+        <h4>Recommendation</h4>
+        <ul>
+            <li><strong>id</strong>: Unique identifier for the recommendation</li>
+            <li><strong>assessmentId</strong>: Foreign key referencing the Assessment that generated this recommendation</li>
+            <li><strong>category</strong>: Category of recommendation (Digital Literacy, Financial Literacy, Financial Inclusion)</li>
+            <li><strong>title</strong>: Title of the recommendation</li>
+            <li><strong>description</strong>: Detailed description of the recommendation</li>
+            <li><strong>resources</strong>: Array of resource references</li>
+        </ul>
+    </div>
+
+    <div class="entity-description">
+        <h4>Resource</h4>
+        <ul>
+            <li><strong>id</strong>: Unique identifier for the resource</li>
+            <li><strong>title</strong>: Title of the resource</li>
+            <li><strong>type</strong>: Type of resource (article, guide, video)</li>
+            <li><strong>content</strong>: Content or URL of the resource</li>
+            <li><strong>category</strong>: Category the resource belongs to</li>
+            <li><strong>createdAt</strong>: Timestamp when the resource was created</li>
+            <li><strong>updatedAt</strong>: Timestamp when the resource was last updated</li>
+        </ul>
+    </div>
+
+    <script>
+        // Add print button
+        window.onload = function() {
+            const printButton = document.createElement('button');
+            printButton.innerText = 'Print to PDF';
+            printButton.style.display = 'block';
+            printButton.style.margin = '20px auto';
+            printButton.style.padding = '10px 20px';
+            printButton.style.backgroundColor = '#3498db';
+            printButton.style.color = 'white';
+            printButton.style.border = 'none';
+            printButton.style.borderRadius = '4px';
+            printButton.style.cursor = 'pointer';
+            printButton.onclick = function() {
+                window.print();
+            };
+            document.body.insertBefore(printButton, document.body.firstChild);
+        };
+    </script>
+</body>
+</html>

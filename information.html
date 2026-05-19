@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide | FinLit2025</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* User Guide Specific Styles */
+        .guide-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .guide-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .guide-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .guide-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .guide-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .guide-section:last-child {
+            border-bottom: none;
+        }
+        
+        .guide-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .guide-section h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: #444;
+        }
+        
+        .guide-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .feature-description {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .color-item {
+            flex: 1;
+            min-width: 150px;
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .primary-color {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+        
+        .secondary-color {
+            background-color: #4ecdc4;
+        }
+        
+        .accent-color {
+            background-color: #ff6b6b;
+        }
+        
+        .neutral-color {
+            background-color: #333;
+        }
+        
+        .light-color {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #eee;
+        }
+        
+        .screenshot {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 1.5rem 0;
+        }
+        
+        .tip-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #2575fc;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-box h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2575fc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tip-box p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .tip-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .navigation-list {
+            margin: 1.5rem 0;
+        }
+        
+        .navigation-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .navigation-list li::before {
+            content: "\f105";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: 1.5rem;
+            }
+            
+            .guide-header h1 {
+                font-size: 2rem;
+            }
+            
+            .guide-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-palette {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo">
+            <a href="FINLIT.html">FinLit<span>Egypt</span></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="FINLIT.html">Home</a></li>
+                <li><a href="FINLIT.html#assessment">Assessment</a></li>
+                <li><a href="FINLIT.html#financial-tools">Financial Tools</a></li>
+                <li><a href="FINLIT.html#resources">Resources</a></li>
+                <li><a href="FINLIT.html#analytics">Analytics</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="FINLIT.html#history">History</a></li>
+                <li class="active"><a href="information.html">User Guide</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="guide-container">
+            <div class="guide-header">
+                <h1><i class="fas fa-book-open"></i> FinLit2025 User Guide</h1>
+                <p>Welcome to the comprehensive guide for the FinLit2025 platform. This document will help you understand the purpose, features, and design principles of our financial literacy and inclusion platform.</p>
+            </div>
+            
+            <div class="guide-section" id="introduction">
+                <h2><i class="fas fa-info-circle"></i> Introduction to FinLit2025</h2>
+                <p>FinLit2025 is a comprehensive digital platform designed to enhance financial literacy and promote financial inclusion across Egypt and beyond. Our mission is to empower individuals with the knowledge, tools, and resources they need to make informed financial decisions and take control of their financial future.</p>
+                
+                <p>In today's rapidly evolving digital financial landscape, understanding financial concepts and services is more important than ever. FinLit2025 bridges the gap between traditional banking and modern digital financial services, making financial education accessible to everyone regardless of their background or prior knowledge.</p>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Why Financial Literacy Matters</h4>
+                    <p>Financial literacy is the foundation for financial well-being and is essential for individuals to make sound financial decisions. Studies show that people with higher financial literacy are more likely to save for retirement, have emergency funds, and make better investment choices.</p>
+                    <p>FinLit2025 aims to increase financial literacy rates across all demographics, contributing to greater financial stability and prosperity at both individual and community levels.</p>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="platform-features">
+                <h2><i class="fas fa-star"></i> Platform Features</h2>
+                <p>FinLit2025 offers a wide range of features designed to support your financial education journey. Here's an overview of the main components of our platform:</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-clipboard-check"></i></div>
+                        <div class="feature-title">Financial Assessment</div>
+                        <div class="feature-description">Evaluate your current financial knowledge with our comprehensive assessment tool. Receive personalized recommendations based on your results.</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="feature-title">Financial Calculators</div>
+                        <div class="feature-description">Access powerful calculators for budgeting, loan planning, and savings goals to help you plan your financial future with confidence.</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-university"></i></div>
+                        <div class="feature-title">Banking Services</div>
+                        <div class="feature-description">Learn about various banking services and how to open accounts with partner financial institutions.</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="feature-title">Analytics Dashboard</div>
+                        <div class="feature-description">Track financial literacy trends and visualize important metrics through interactive charts and graphs.</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-user-circle"></i></div>
+                        <div class="feature-title">Personal Account</div>
+                        <div class="feature-description">Create and manage your personal account to save your progress, access personalized recommendations, and track your financial journey.</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-book"></i></div>
+                        <div class="feature-title">Educational Resources</div>
+                        <div class="feature-description">Access a library of articles, guides, and videos covering various financial topics from basic to advanced levels.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="navigation">
+                <h2><i class="fas fa-compass"></i> Navigating the Platform</h2>
+                <p>FinLit2025 features an intuitive navigation system designed to help you easily access all the platform's features. Here's how to navigate through the different sections:</p>
+                
+                <h3>Main Navigation Menu</h3>
+                <p>The main navigation menu is located at the top of every page and provides access to all major sections of the platform:</p>
+                
+                <ul class="navigation-list">
+                    <li><strong>Home:</strong> The landing page with an overview of the platform and quick access to key features.</li>
+                    <li><strong>Assessment:</strong> Take financial literacy assessments to evaluate your knowledge and receive personalized recommendations.</li>
+                    <li><strong>Financial Tools:</strong> Access various calculators and tools to help with budgeting, loan planning, and savings goals.</li>
+                    <li><strong>Resources:</strong> Browse educational materials including articles, guides, and videos on various financial topics.</li>
+                    <li><strong>Analytics:</strong> View data visualizations and trends related to financial literacy and inclusion.</li>
+                    <li><strong>Account:</strong> Manage your personal account, track your progress, and access saved calculations.</li>
+                    <li><strong>History:</strong> Review your past activities and interactions with the platform.</li>
+                </ul>
+                
+                <h3>Button Navigation</h3>
+                <p>Throughout the platform, you'll find action buttons that help you navigate to specific sections or perform certain actions:</p>
+                
+                <ul class="navigation-list">
+                    <li><strong>Take Assessment:</strong> Directs you to the financial literacy assessment section.</li>
+                    <li><strong>Open Bank Account:</strong> Takes you to the banking services section where you can learn about opening accounts with partner institutions.</li>
+                    <li><strong>Go to Account Management:</strong> Navigates to your personal account management page.</li>
+                    <li><strong>Login/Register:</strong> Provides access to account authentication options.</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Navigation Tip</h4>
+                    <p>You can always return to the home page by clicking on the FinLitEgypt logo in the top-left corner of any page.</p>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="calculators">
+                <h2><i class="fas fa-calculator"></i> Using the Financial Calculators</h2>
+                <p>FinLit2025 offers several powerful calculators to help you plan and manage your finances. Here's how to use them effectively:</p>
+                
+                <h3>Budget Calculator</h3>
+                <p>The Budget Calculator helps you track your income and expenses to create a balanced monthly budget. It also provides annual projections and savings goals calculations.</p>
+                
+                <p>Key features of the Budget Calculator include:</p>
+                <ul class="navigation-list">
+                    <li><strong>Monthly Budget Planner:</strong> Input your income and various expense categories to see your monthly balance.</li>
+                    <li><strong>Budget Analysis:</strong> Visualize your expense breakdown with interactive charts and category percentages.</li>
+                    <li><strong>Annual Budget:</strong> View annualized projections of your income, expenses, and savings.</li>
+                    <li><strong>Savings Goals:</strong> Calculate how much you need to save monthly to reach specific financial goals.</li>
+                </ul>
+                
+                <h3>Loan Calculator</h3>
+                <p>The Loan Calculator helps you understand the implications of different loan terms, interest rates, and payment schedules.</p>
+                
+                <p>With this calculator, you can:</p>
+                <ul class="navigation-list">
+                    <li>Calculate monthly payments based on loan amount, interest rate, and term.</li>
+                    <li>View amortization schedules showing the breakdown of principal and interest over time.</li>
+                    <li>Compare different loan scenarios to find the best option for your situation.</li>
+                </ul>
+                
+                <h3>Savings Calculator</h3>
+                <p>The Savings Calculator helps you plan for future financial goals by calculating how your savings will grow over time.</p>
+                
+                <p>Features include:</p>
+                <ul class="navigation-list">
+                    <li>Calculate future value of regular deposits with compound interest.</li>
+                    <li>Determine how much you need to save monthly to reach a specific goal.</li>
+                    <li>Visualize your savings growth with interactive charts.</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Calculator Tip</h4>
+                    <p>You can save your calculator results to your account for future reference by clicking the "Save" button after performing calculations. This feature requires you to be logged in to your account.</p>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="account">
+                <h2><i class="fas fa-user-circle"></i> Account Management</h2>
+                <p>Creating and managing your personal account allows you to save your progress, access personalized recommendations, and track your financial journey over time.</p>
+                
+                <h3>Registration Process</h3>
+                <p>To create a new account:</p>
+                <ol class="navigation-list">
+                    <li>Click on the "Account" tab in the main navigation menu.</li>
+                    <li>Select the "Register" button.</li>
+                    <li>Fill in the required information (name, email, password).</li>
+                    <li>Review your information in the confirmation preview.</li>
+                    <li>Click "Register" to complete the process.</li>
+                </ol>
+                
+                <h3>Login Process</h3>
+                <p>To log in to your existing account:</p>
+                <ol class="navigation-list">
+                    <li>Click on the "Account" tab in the main navigation menu.</li>
+                    <li>Select the "Login" button.</li>
+                    <li>Enter your email address and password.</li>
+                    <li>Click "Login" to access your account.</li>
+                </ol>
+                
+                <h3>Account Features</h3>
+                <p>Once logged in, you can:</p>
+                <ul class="navigation-list">
+                    <li>Save calculator results for future reference.</li>
+                    <li>Track your assessment scores and progress over time.</li>
+                    <li>Access personalized recommendations based on your assessment results.</li>
+                    <li>Update your profile information and preferences.</li>
+                </ul>
+            </div>
+            
+            <div class="guide-section" id="design-principles">
+                <h2><i class="fas fa-paint-brush"></i> Design Principles</h2>
+                <p>FinLit2025 was designed with several key principles in mind to ensure a positive, engaging, and accessible user experience. Understanding these principles can help you better navigate and appreciate the platform.</p>
+                
+                <h3>Color Scheme</h3>
+                <p>Our color palette was carefully selected to create a professional, trustworthy, and engaging experience:</p>
+                
+                <div class="color-palette">
+                    <div class="color-item primary-color">Primary Color<br>#6a11cb - #2575fc</div>
+                    <div class="color-item secondary-color">Secondary Color<br>#4ecdc4</div>
+                    <div class="color-item accent-color">Accent Color<br>#ff6b6b</div>
+                    <div class="color-item neutral-color">Neutral Dark<br>#333333</div>
+                    <div class="color-item light-color">Neutral Light<br>#f8f9fa</div>
+                </div>
+                
+                <p>The primary gradient of purple to blue represents trust, stability, and innovation—qualities essential in the financial sector. The secondary teal color adds a fresh, modern feel, while the accent red is used sparingly to draw attention to important elements.</p>
+                
+                <h3>Layout Structure</h3>
+                <p>The platform follows a consistent layout structure across all pages:</p>
+                <ul class="navigation-list">
+                    <li><strong>Header:</strong> Contains the logo and main navigation menu for easy access to all sections.</li>
+                    <li><strong>Hero Section:</strong> Introduces the main purpose of each page with clear headings and calls to action.</li>
+                    <li><strong>Content Sections:</strong> Organized in a logical flow with clear headings and visual separation.</li>
+                    <li><strong>Cards and Containers:</strong> Content is grouped into visually distinct cards with subtle shadows for a clean, organized appearance.</li>
+                    <li><strong>Footer:</strong> Provides additional navigation options and copyright information.</li>
+                </ul>
+                
+                <h3>Typography</h3>
+                <p>We use a carefully selected combination of fonts to ensure readability and visual hierarchy:</p>
+                <ul class="navigation-list">
+                    <li><strong>Headings:</strong> Poppins font family provides a modern, clean look for all headings.</li>
+                    <li><strong>Body Text:</strong> Roboto font family ensures excellent readability for all content.</li>
+                    <li><strong>Font Sizes:</strong> Follow a consistent scale to maintain proper visual hierarchy.</li>
+                    <li><strong>Line Heights:</strong> Optimized for comfortable reading across different screen sizes.</li>
+                </ul>
+                
+                <h3>Animations and Transitions</h3>
+                <p>The platform incorporates subtle animations and transitions to enhance the user experience:</p>
+                <ul class="navigation-list">
+                    <li><strong>Background Animations:</strong> Dynamic, colorful banking-themed imagery with smooth motion effects.</li>
+                    <li><strong>Hover Effects:</strong> Interactive elements respond to user interaction with subtle transitions.</li>
+                    <li><strong>Chart Animations:</strong> Data visualizations animate when they enter the viewport to draw attention.</li>
+                    <li><strong>Scroll Transitions:</strong> Content elements fade in smoothly as you scroll down the page.</li>
+                </ul>
+            </div>
+            
+            <div class="guide-section" id="accessibility">
+                <h2><i class="fas fa-universal-access"></i> Accessibility Features</h2>
+                <p>FinLit2025 is designed to be accessible to all users, including those with disabilities. We've implemented several features to ensure everyone can use our platform effectively:</p>
+                
+                <h3>Color Contrast</h3>
+                <p>All text and interactive elements meet WCAG (Web Content Accessibility Guidelines) contrast standards to ensure readability for users with visual impairments. We've carefully selected background and text color combinations to maintain a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text.</p>
+                
+                <h3>Keyboard Navigation</h3>
+                <p>The entire platform can be navigated using only a keyboard. Interactive elements have visible focus states, and the tab order follows a logical sequence.</p>
+                
+                <h3>Screen Reader Compatibility</h3>
+                <p>We've implemented proper semantic HTML and ARIA attributes to ensure compatibility with screen readers. All images have descriptive alt text, and interactive elements have appropriate labels.</p>
+                
+                <h3>Responsive Design</h3>
+                <p>The platform is fully responsive and adapts to different screen sizes and orientations. This ensures a consistent experience across devices, from desktop computers to mobile phones.</p>
+                
+                <h3>Text Scaling</h3>
+                <p>Text can be resized up to 200% without loss of content or functionality, accommodating users who need larger text for better readability.</p>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Accessibility Tip</h4>
+                    <p>If you encounter any accessibility issues while using the platform, please contact us through the feedback form. We are committed to continuously improving accessibility for all users.</p>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="troubleshooting">
+                <h2><i class="fas fa-wrench"></i> Troubleshooting</h2>
+                <p>If you encounter any issues while using FinLit2025, here are some common problems and their solutions:</p>
+                
+                <h3>Login Issues</h3>
+                <ul class="navigation-list">
+                    <li><strong>Forgotten Password:</strong> Click on the "Forgot Password" link on the login page to reset your password.</li>
+                    <li><strong>Account Not Recognized:</strong> Ensure you're using the correct email address. If you're new to the platform, you may need to register first.</li>
+                    <li><strong>Login Button Not Working:</strong> Make sure you've filled in all required fields correctly.</li>
+                </ul>
+                
+                <h3>Calculator Issues</h3>
+                <ul class="navigation-list">
+                    <li><strong>Calculations Not Updating:</strong> Ensure you've entered valid numbers in all required fields and clicked the "Calculate" button.</li>
+                    <li><strong>Charts Not Displaying:</strong> Try refreshing the page. If the issue persists, check your browser settings to ensure JavaScript is enabled.</li>
+                    <li><strong>Cannot Save Results:</strong> You must be logged in to save calculator results. If you're already logged in, try logging out and back in.</li>
+                </ul>
+                
+                <h3>Display Issues</h3>
+                <ul class="navigation-list">
+                    <li><strong>Content Not Displaying Correctly:</strong> Try using a different browser or clearing your browser cache.</li>
+                    <li><strong>Text Too Small/Large:</strong> Use your browser's zoom function (usually Ctrl/Cmd + or -) to adjust the text size.</li>
+                    <li><strong>Images Not Loading:</strong> Check your internet connection and try refreshing the page.</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Support Contact</h4>
+                    <p>If you continue to experience issues that aren't resolved by these troubleshooting steps, please contact our support team at support@finlit2025.com or use the feedback form accessible from the footer of any page.</p>
+                </div>
+            </div>
+            
+            <div class="guide-section" id="conclusion">
+                <h2><i class="fas fa-flag-checkered"></i> Conclusion</h2>
+                <p>Thank you for using FinLit2025! We hope this guide has provided you with a comprehensive understanding of our platform and its features. Our mission is to empower you with the knowledge and tools you need to make informed financial decisions and achieve your financial goals.</p>
+                
+                <p>Remember that financial literacy is a journey, not a destination. We encourage you to regularly use the platform's resources, take assessments, and utilize the calculators to continue building your financial knowledge and skills.</p>
+                
+                <p>We are constantly working to improve FinLit2025 based on user feedback and emerging financial trends. If you have suggestions for new features or improvements, please don't hesitate to share them with us.</p>
+                
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> Final Tip</h4>
+                    <p>Set a regular schedule to review your financial situation using the Budget Calculator. Monthly reviews can help you stay on track with your financial goals and make adjustments as needed.</p>
+                </div>
+                
+                <p>Wishing you success on your financial journey!</p>
+                
+                <p>— The FinLit2025 Team</p>
+            </div>
+        </div>
+        
+        <a href="#" class="back-to-top" id="back-to-top">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </main>
+    
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="FINLIT.html">FinLit<span>Egypt</span></a>
+                <p>Financial Literacy & Inclusion Platform</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-links-column">
+                    <h3>Platform</h3>
+                    <ul>
+                        <li><a href="FINLIT.html">Home</a></li>
+                        <li><a href="FINLIT.html#assessment">Assessment</a></li>
+                        <li><a href="FINLIT.html#financial-tools">Financial Tools</a></li>
+                        <li><a href="FINLIT.html#resources">Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="account.html">Login</a></li>
+                        <li><a href="account.html">Register</a></li>
+                        <li><a href="account.html">Account Management</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="information.html">User Guide</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 FinLit2025. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

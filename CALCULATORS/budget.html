@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator - Professional Financial Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-wallet"></i> Professional Budget Calculator</h1>
+                <p>Plan your finances with precision and confidence</p>
+            </div>
+        </header>
+
+        <nav class="calculator-nav">
+            <button class="nav-btn active" data-calculator="monthly">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Monthly Budget</span>
+            </button>
+            <button class="nav-btn" data-calculator="annual">
+                <i class="fas fa-calendar-check"></i>
+                <span>Annual Budget</span>
+            </button>
+            <button class="nav-btn" data-calculator="savings">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Savings Goals</span>
+            </button>
+        </nav>
+
+        <main class="main-content">
+            <div class="calculator-section active" id="budget-calculator">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-chart-pie"></i> Budget Calculator</h2>
+                        <p class="description">Track your income and expenses to create a balanced budget plan</p>
+                        
+                        <form class="calculator-form" id="budget-form">
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill-wave"></i> Income (Before Tax)</label>
+                                <div class="input-group">
+                                    <input type="number" id="salary" placeholder="Salary & Earned Income" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-percentage"></i> Income Tax Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="tax-rate" value="20" min="0" max="100" step="0.1" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="expense-section">
+                                <h3><i class="fas fa-home"></i> Housing & Utilities</h3>
+                                <div class="form-group">
+                                    <input type="number" id="mortgage" placeholder="Mortgage/Rent">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="utilities" placeholder="Utilities (electricity, water, etc.)">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="expense-section">
+                                <h3><i class="fas fa-car"></i> Transportation</h3>
+                                <div class="form-group">
+                                    <input type="number" id="car-payment" placeholder="Car Payment/Public Transport">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="fuel" placeholder="Fuel & Maintenance">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="expense-section">
+                                <h3><i class="fas fa-utensils"></i> Living Expenses</h3>
+                                <div class="form-group">
+                                    <input type="number" id="groceries" placeholder="Groceries & Food">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="healthcare" placeholder="Healthcare & Insurance">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="expense-section">
+                                <h3><i class="fas fa-graduation-cap"></i> Education & Development</h3>
+                                <div class="form-group">
+                                    <input type="number" id="education" placeholder="Tuition & Courses">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="personal-dev" placeholder="Books & Materials">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="expense-section">
+                                <h3><i class="fas fa-piggy-bank"></i> Savings & Investments</h3>
+                                <div class="form-group">
+                                    <input type="number" id="savings" placeholder="Emergency Fund & Savings">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="investments" placeholder="Investments">
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Budget
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="results-card" id="budget-results" style="display: none;">
+                        <h3><i class="fas fa-chart-bar"></i> Budget Analysis</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Net Income (After Tax)</span>
+                                <span class="result-value" id="net-income">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Expenses</span>
+                                <span class="result-value" id="total-expenses">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Monthly Savings</span>
+                                <span class="result-value" id="monthly-savings">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Savings Rate</span>
+                                <span class="result-value" id="savings-rate">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="expenses-chart"></canvas>
+                        </div>
+                        
+                        <div class="recommendations" id="budget-recommendations">
+                            <h4><i class="fas fa-lightbulb"></i> Budget Recommendations</h4>
+                            <div id="recommendations-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="budget.js"></script>
+    <script src="budget-extended.js"></script>
+</body>
+</html>

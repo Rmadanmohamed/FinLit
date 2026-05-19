@@ -1,0 +1,41 @@
+{
+  "calculations": [
+    {
+      "id": "calc_1",
+      "userId": "user_1",
+      "calculationType": "savings",
+      "calculationData": {
+        "initialInvestment": 5000,
+        "monthlyContribution": 200,
+        "interestRate": 5,
+        "years": 10,
+        "finalAmount": 35258.56
+      },
+      "createdAt": "2023-03-10T00:00:00.000Z"
+    },
+    {
+      "id": "calc_2",
+      "userId": "user_1",
+      "calculationType": "loan",
+      "calculationData": {
+        "loanAmount": 20000,
+        "interestRate": 7.5,
+        "loanTerm": 5,
+        "monthlyPayment": 400.76,
+        "totalInterest": 4045.49
+      },
+      "createdAt": "2023-03-15T00:00:00.000Z"
+    },
+    {
+      "id": "calc_3",
+      "userId": "user_2",
+      "calculationType": "budget",
+      "calculationData": {
+        "income": 3500,
+        "expenses": 2800,
+        "savings": 700
+      },
+      "createdAt": "2023-04-01T00:00:00.000Z"
+    }
+  ]
+}

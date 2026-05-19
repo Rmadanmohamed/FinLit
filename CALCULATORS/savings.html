@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Calculator | FinLit2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Added animations and UI interactions -->
+    <script src="animations.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-piggy-bank"></i> Professional Savings Calculator</h1>
+                <p>Plan your savings with precision and confidence</p>
+            </div>
+            <div class="main-site-link">
+                <a href="../FINLIT.html#tools" class="back-to-main">
+                    <i class="fas fa-home"></i> Back to Main Site
+                </a>
+            </div>
+        </header>
+
+        <nav class="calculator-nav">
+            <button class="nav-btn active" data-calculator="compound">
+                <i class="fas fa-chart-line"></i>
+                <span>Compound Interest</span>
+            </button>
+            <button class="nav-btn" data-calculator="goal">
+                <i class="fas fa-bullseye"></i>
+                <span>Savings Goal</span>
+            </button>
+            <button class="nav-btn" data-calculator="comparison">
+                <i class="fas fa-balance-scale"></i>
+                <span>Rate Comparison</span>
+            </button>
+        </nav>
+
+        <main class="main-content">
+            <div class="calculator-section active" id="savings-calculator">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-chart-line"></i> Savings Calculator</h2>
+                        <p class="description">Calculate your future savings with compound interest and regular contributions</p>
+                        
+                        <form class="calculator-form" id="savings-form">
+                            <div class="form-group">
+                                <label><i class="fas fa-dollar-sign"></i> Initial Deposit</label>
+                                <div class="input-group">
+                                    <input type="number" id="initial-deposit" value="20000" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-coins"></i> Monthly Contribution</label>
+                                <div class="input-group">
+                                    <input type="number" id="monthly-contribution" value="500" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-chart-bar"></i> Annual Contribution Increase</label>
+                                <div class="input-group">
+                                    <input type="number" id="contribution-increase" value="3" min="0" max="100" step="0.1">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-percentage"></i> Annual Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="interest-rate" value="5" min="0" max="100" step="0.1" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="compound-frequency">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Time Period</label>
+                                <div class="input-group">
+                                    <input type="number" id="years" value="10" min="1" max="50" required>
+                                    <span class="input-suffix">years</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-hand-holding-usd"></i> Tax Rate (Optional)</label>
+                                <div class="input-group">
+                                    <input type="number" id="tax-rate" value="20" min="0" max="100" step="0.1">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Savings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="results-card" id="savings-results" style="display: none;">
+                        <h3><i class="fas fa-chart-pie"></i> Savings Projection</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">End Balance</span>
+                                <span class="result-value" id="end-balance">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Contributions</span>
+                                <span class="result-value" id="total-contributions">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Interest Earned</span>
+                                <span class="result-value" id="total-interest">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">After-Tax Balance</span>
+                                <span class="result-value" id="after-tax-balance">EGP 0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="savings-chart"></canvas>
+                        </div>
+                        
+                        <div class="accumulation-schedule">
+                            <h4><i class="fas fa-table"></i> Accumulation Schedule</h4>
+                            <div class="schedule-table" id="schedule-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="calculator-section" id="goal-calculator" style="display:none;">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-bullseye"></i> Savings Goal Calculator</h2>
+                        <p class="description">Find out how much you need to save each month to reach your goal.</p>
+                        <form class="calculator-form" id="goal-form">
+                            <div class="form-group">
+                                <label><i class="fas fa-bullseye"></i> Target Amount</label>
+                                <div class="input-group">
+                                    <input type="number" id="goal-target" value="100000" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-dollar-sign"></i> Initial Deposit</label>
+                                <div class="input-group">
+                                    <input type="number" id="goal-initial" value="20000" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-percentage"></i> Annual Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" id="goal-rate" value="5" min="0" max="100" step="0.1" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="goal-frequency">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Time Period</label>
+                                <div class="input-group">
+                                    <input type="number" id="goal-years" value="10" min="1" max="50" required>
+                                    <span class="input-suffix">years</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-calculator"></i> Calculate Goal
+                            </button>
+                        </form>
+                    </div>
+                    <div class="results-card" id="goal-results" style="display: none;">
+                        <h3><i class="fas fa-bullseye"></i> Goal Savings Plan</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Required Monthly Contribution</span>
+                                <span class="result-value" id="goal-monthly">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Contributions</span>
+                                <span class="result-value" id="goal-total-contributions">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Total Interest Earned</span>
+                                <span class="result-value" id="goal-total-interest">EGP 0.00</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="goal-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="calculator-section" id="comparison-calculator" style="display:none;">
+                <div class="calculator-layout">
+                    <div class="calculator-card">
+                        <h2><i class="fas fa-balance-scale"></i> Rate Comparison Calculator</h2>
+                        <p class="description">Compare two savings rates to see which grows your money faster.</p>
+                        <form class="calculator-form" id="comparison-form">
+                            <div class="form-group">
+                                <label><i class="fas fa-dollar-sign"></i> Initial Deposit</label>
+                                <div class="input-group">
+                                    <input type="number" id="comp-initial" value="20000" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-coins"></i> Monthly Contribution</label>
+                                <div class="input-group">
+                                    <input type="number" id="comp-monthly" value="500" min="0" step="100" required>
+                                    <span class="input-suffix">EGP</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-percentage"></i> Rate 1 (Annual %)</label>
+                                <div class="input-group">
+                                    <input type="number" id="comp-rate1" value="5" min="0" max="100" step="0.1" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-percentage"></i> Rate 2 (Annual %)</label>
+                                <div class="input-group">
+                                    <input type="number" id="comp-rate2" value="7" min="0" max="100" step="0.1" required>
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-sync-alt"></i> Compound Frequency</label>
+                                <select id="comp-frequency">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Semi-annually</option>
+                                    <option value="1">Annually</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Time Period</label>
+                                <div class="input-group">
+                                    <input type="number" id="comp-years" value="10" min="1" max="50" required>
+                                    <span class="input-suffix">years</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="calculate-btn">
+                                <i class="fas fa-balance-scale"></i> Compare Rates
+                            </button>
+                        </form>
+                    </div>
+                    <div class="results-card" id="comparison-results" style="display: none;">
+                        <h3><i class="fas fa-balance-scale"></i> Rate Comparison Results</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <span class="result-label">Final Balance (Rate 1)</span>
+                                <span class="result-value" id="comp-balance1">EGP 0.00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Final Balance (Rate 2)</span>
+                                <span class="result-value" id="comp-balance2">EGP 0.00</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="comparison-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="savings.js"></script>
+    <script>
+        // Ensure navigation works properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get navigation buttons
+            const navButtons = document.querySelectorAll('.calculator-nav .nav-btn');
+            
+            // Add event listeners to navigation buttons
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get calculator type from data attribute
+                    const calculatorType = this.getAttribute('data-calculator');
+                    
+                    // Hide all calculator sections
+                    document.querySelectorAll('.calculator-section').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Show selected calculator section
+                    if (calculatorType === 'compound') {
+                        document.getElementById('savings-calculator').style.display = 'block';
+                    } else if (calculatorType === 'goal') {
+                        document.getElementById('goal-calculator').style.display = 'block';
+                    } else if (calculatorType === 'comparison') {
+                        document.getElementById('comparison-calculator').style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
