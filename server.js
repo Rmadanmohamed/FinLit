@@ -12,22 +12,47 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 
+// Root Route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'FINLIT.html'));
+});
+
 // Data storage paths
-const DATA_DIR = path.join(__dirname, 'data');
+// Vercel serverless functions have a read-only filesystem except for /tmp
+const DATA_DIR = process.env.VERCEL ? '/tmp/data' : path.join(__dirname, 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const CALCULATIONS_FILE = path.join(DATA_DIR, 'calculations.json');
 
 // Ensure data directory and files exist
 if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR);
+    try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+    } catch (e) {
+        console.error('Could not create data dir:', e);
+    }
 }
 
-if (!fs.existsSync(USERS_FILE)) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2));
-}
+try {
+    if (!fs.existsSync(USERS_FILE)) {
+        // Copy from original data dir if it exists, otherwise empty
+        const origFile = path.join(__dirname, 'data', 'users.json');
+        if (fs.existsSync(origFile)) {
+            fs.copyFileSync(origFile, USERS_FILE);
+        } else {
+            fs.writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2));
+        }
+    }
 
-if (!fs.existsSync(CALCULATIONS_FILE)) {
-    fs.writeFileSync(CALCULATIONS_FILE, JSON.stringify({ calculations: [] }, null, 2));
+    if (!fs.existsSync(CALCULATIONS_FILE)) {
+        const origFile = path.join(__dirname, 'data', 'calculations.json');
+        if (fs.existsSync(origFile)) {
+            fs.copyFileSync(origFile, CALCULATIONS_FILE);
+        } else {
+            fs.writeFileSync(CALCULATIONS_FILE, JSON.stringify({ calculations: [] }, null, 2));
+        }
+    }
+} catch (e) {
+    console.error('Could not initialize data files:', e);
 }
 
 // API Routes
@@ -193,7 +218,11 @@ app.delete('/api/calculations/:id', (req, res) => {
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Start server (only if not running on Vercel)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
