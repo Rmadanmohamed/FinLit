@@ -10,17 +10,16 @@ test('API authentication, legacy upgrade, ownership and private files', async ()
     fs.writeFileSync(usersFile, JSON.stringify({ users: [{ id: 'legacy', username: 'Legacy', email: 'legacy@example.test', password: 'legacy-test-only' }] }));
     fs.writeFileSync(path.join(dir, 'calculations.json'), JSON.stringify({ calculations: [] }));
     process.env.FINLIT_DATA_DIR = dir;
-    process.env.FINLIT_AUTH_SECRET = 'synthetic-test-key-not-for-production-12345';
     const app = require('../server');
     const server = app.listen(0, '127.0.0.1');
     try {
         await new Promise((resolve, reject) => { server.once('listening', resolve); server.once('error', reject); });
         const url = 'http://127.0.0.1:' + server.address().port;
-        async function request(route, method = 'GET', data, token) {
-            const headers = { 'Content-Type': 'application/json' };
+        async function request(route, method = 'GET', data, token, extraHeaders = {}) {
+            const headers = { 'Content-Type': 'application/json', ...extraHeaders };
             if (token) headers.Authorization = 'Bearer ' + token;
             const res = await fetch(url + route, { method, headers, body: data === undefined ? undefined : JSON.stringify(data) });
-            return { status: res.status, body: await res.json().catch(() => null) };
+            return { status: res.status, body: await res.json().catch(() => null), cookie: res.headers.get('set-cookie') };
         }
         const register = email => request('/api/users/register', 'POST', { username: 'Test', email, password: 'test-password' });
         const a = await register('a@example.test'), b = await register('b@example.test');
@@ -55,6 +54,29 @@ test('API authentication, legacy upgrade, ownership and private files', async ()
         const deletion = '/api/calculations/' + saved.body.calculation.id;
         assert.equal((await request(deletion, 'DELETE', undefined, b.body.token)).status, 404);
         assert.equal((await request(deletion, 'DELETE', undefined, a.body.token)).status, 200);
+        const browser = await request('/api/users/login', 'POST', { email: 'a@example.test', password: 'test-password' }, undefined, {'X-FinLit-Client':'browser'});
+        assert.equal(browser.status, 200);
+        assert.equal(browser.body.token, undefined);
+        assert.match(browser.cookie, /HttpOnly/i);
+        assert.match(browser.cookie, /SameSite=Strict/i);
+        const cookie = browser.cookie.split(';')[0];
+        const browserHeaders = {Cookie: cookie, 'X-FinLit-Client':'browser'};
+        assert.equal((await request('/api/users/me', 'GET', undefined, undefined, browserHeaders)).body.user.id, a.body.user.id);
+        assert.equal((await request('/api/calculations/save', 'POST', calculation, undefined, {Cookie:cookie})).status, 403);
+        assert.equal((await request('/api/calculations/save', 'POST', calculation, undefined, {...browserHeaders,'Sec-Fetch-Site':'cross-site'})).status, 403);
+        assert.equal((await request('/api/calculations/save', 'POST', {...calculation, calculationType:'invalid'}, undefined, browserHeaders)).status, 400);
+        assert.equal((await request('/api/users/logout', 'POST', undefined, undefined, browserHeaders)).status, 200);
+        assert.equal((await request('/api/users/me', 'GET', undefined, undefined, browserHeaders)).status, 401);
+        assert.equal((await request('/api/users/logout', 'POST', undefined, a.body.token)).status, 200);
+        assert.equal((await request(route, 'GET', undefined, a.body.token)).status, 401);
+        assert.equal((await request('/.finlit-data/sessions.json')).status, 404);
+        assert.equal((await request('/data/calculations.json')).status, 404);
+        const sessions = JSON.parse(fs.readFileSync(path.join(dir,'sessions.json'),'utf8')).sessions;
+        assert.ok(sessions.every(item => /^[a-f0-9]{64}$/.test(item.hash) && !item.token));
+        let response;
+        for (let i=0;i<12;i++) response = await request('/api/users/login','POST',{email:'unknown@example.test',password:'wrong-password'});
+        assert.equal(response.status,429);
+
     } finally {
         await new Promise(resolve => server.close(resolve));
         fs.rmSync(dir, { recursive: true, force: true });
