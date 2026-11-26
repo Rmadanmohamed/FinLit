@@ -6,3 +6,6 @@ build
 .env.local
 coverage
 *.log
+
+# Private local runtime storage; never commit personal records
+.finlit-data/
