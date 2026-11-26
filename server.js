@@ -43,22 +43,11 @@ if (!fs.existsSync(DATA_DIR)) {
 
 try {
     if (!fs.existsSync(USERS_FILE)) {
-        // Copy from original data dir if it exists, otherwise empty
-        const origFile = path.join(__dirname, 'data', 'users.json');
-        if (fs.existsSync(origFile)) {
-            fs.copyFileSync(origFile, USERS_FILE);
-        } else {
-            fs.writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2));
-        }
+        fs.writeFileSync(USERS_FILE, JSON.stringify({ users: [] }, null, 2), { mode: 0o600 });
     }
 
     if (!fs.existsSync(CALCULATIONS_FILE)) {
-        const origFile = path.join(__dirname, 'data', 'calculations.json');
-        if (fs.existsSync(origFile)) {
-            fs.copyFileSync(origFile, CALCULATIONS_FILE);
-        } else {
-            fs.writeFileSync(CALCULATIONS_FILE, JSON.stringify({ calculations: [] }, null, 2));
-        }
+        fs.writeFileSync(CALCULATIONS_FILE, JSON.stringify({ calculations: [] }, null, 2), { mode: 0o600 });
     }
 } catch (e) {
     console.error('Could not initialize data files:', e);
