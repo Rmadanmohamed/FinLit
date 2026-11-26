@@ -22,15 +22,15 @@
       "use": "@vercel/static"
     },
     {
-      "src": "data/**",
-      "use": "@vercel/static"
-    },
-    {
       "src": "CALCULATORS/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/data(?:/.*)?",
+      "status": 404
+    },
     {
       "src": "/api/(.*)",
       "dest": "/server.js"

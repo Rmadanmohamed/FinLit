@@ -4,7 +4,7 @@
 
 FinLit is an educational web application designed to help users explore digital financial literacy, inclusion, budgeting, loans and savings. It combines educational resources, interactive calculators, assessments, account-related pages and a lightweight Express API.
 
-> **Security status: local demonstration only.** The server stores passwords in plaintext JSON and provides user/calculation endpoints without authentication or authorization. Do not deploy publicly or enter real credentials, financial records or personal information. The source has not been changed as part of this documentation update.
+> **Security status: local demonstration only.** The repair branch hardens the Express API, but browser-local authentication is still demonstration code and existing data may contain legacy plaintext credentials. Do not deploy publicly or enter real credentials or personal information.
 
 ## Features
 
@@ -69,11 +69,11 @@ No secrets are necessary for local demonstration. The application stores JSON on
 
 Open the home page and choose [Budget](CALCULATORS/budget.html), [Savings](CALCULATORS/savings.html) or [Loan](CALCULATORS/loan.html). Enter fictional values to explore estimates; outputs are educational, not personalized financial advice. Assessment code generates scores and recommendations from form responses.
 
-The server defines the following routes: registration/login (POST), user listing (GET), calculation save (POST), user calculation retrieval (GET), and calculation deletion (DELETE). These endpoints lack production-safe access controls and must not be exposed publicly. Frontend localStorage state and server records should not be assumed to be securely synchronized.
+The server defines the following routes: registration/login (POST), user listing (GET), calculation save (POST), user calculation retrieval (GET), and calculation deletion (DELETE). Registration/login return a short-lived bearer token. Calculation routes enforce the authenticated user's ownership; the user-listing route is disabled. These endpoints are still not production-ready. Frontend localStorage state and server records should not be assumed to be securely synchronized.
 
 ## Testing and validation
 
-No automated test suite is included. For local testing, use synthetic inputs to check calculator boundary values, page navigation, and assessment output. Add authorization, input validation and calculation unit tests before deployment. No build, test or deployment was executed during this audit.
+An API regression suite is included: `node --test tests/api-security.test.js` (Node.js 20+ and installed dependencies). It uses temporary synthetic data. For local testing, use synthetic inputs to check calculator boundary values, page navigation, and assessment output. Add authorization, input validation and calculation unit tests before deployment. No build, test or deployment was executed during this audit.
 
 ## Screenshots and demo
 
@@ -81,8 +81,8 @@ No verified public demo or standalone interface screenshot was identified. The c
 
 ## Limitations and next steps
 
-1. Replace plaintext password storage with secure password hashing and an appropriate migration/reset strategy.
-2. Require authenticated sessions and enforce ownership checks on all user and calculation operations.
+1. Finish the migration/reset strategy for inactive legacy accounts and replace browser-local authentication. The API uses salted scrypt hashes for new accounts and upgrades a legacy password on successful login.
+2. Use persistent server-side sessions and wire the browser UI to the authenticated API; the repair branch currently uses process-local sessions.
 3. Restrict CORS, validate inputs, rate-limit requests and prevent exposure of data files through static serving.
 4. Replace local JSON persistence with a managed database; serverless temporary storage is not durable.
 5. Verify calculator formulas and browser accessibility before release.
@@ -94,3 +94,7 @@ No trained ML model or dataset evaluation applies.
 The manifest credits the **FinLit2025 Team**. Preserve original authorship and contributor history. The package manifest declares MIT, but a standalone license file was not found in this repository; verify licensing before redistribution.
 
 Portfolio contact: [Ramadan Mohamed Hassan](https://ramadan-ai-portfolio.vercel.app/) · [LinkedIn](https://www.linkedin.com/in/ramadan-mohamed-89085a366/) · [GitHub](https://github.com/Rmadanmohamed)
+
+## Repair-branch API configuration
+
+Optional `FINLIT_DATA_DIR` points to a private writable directory outside public assets. Existing storage is not bulk-migrated or deleted. API registration requires a minimum 12-character password. Send the returned token as `Authorization: Bearer YOUR_SESSION_TOKEN` to calculation endpoints and POST /api/users/logout. Tokens expire after one hour and are lost on restart; this single-process demonstration design is unsuitable for distributed/serverless deployment. The browser demo does not yet use these sessions. Do not enter real credentials. Existing tracked data/history must be reviewed separately; no data files were modified.
