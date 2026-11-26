@@ -6,12 +6,13 @@
  */
 class DatabaseManager {
     constructor(authManager) {
-        this.apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
+        this.apiBaseUrl = '/api';
         this.authManager = authManager;
     }
 
     // Save calculation data to the server
     async saveCalculation(calculationType, calculationData) {
+        if (this.authManager) await this.authManager.ready;
         if (!this.authManager || !this.authManager.isLoggedIn()) {
             // If not logged in, save to local storage instead
             return this.saveCalculationLocally(calculationType, calculationData);
@@ -21,8 +22,7 @@ class DatabaseManager {
             return await this.authManager.saveCalculation(calculationType, calculationData);
         } catch (error) {
             console.error('Error saving calculation to server:', error);
-            // Fallback to local storage if server save fails
-            return this.saveCalculationLocally(calculationType, calculationData);
+            throw error;
         }
     }
 
@@ -56,6 +56,7 @@ class DatabaseManager {
 
     // Get all calculations of a specific type
     async getCalculations(calculationType) {
+        if (this.authManager) await this.authManager.ready;
         if (!this.authManager || !this.authManager.isLoggedIn()) {
             // If not logged in, get from local storage
             return this.getLocalCalculations(calculationType);
@@ -67,8 +68,7 @@ class DatabaseManager {
             return allCalculations.filter(calc => calc.calculationType === calculationType);
         } catch (error) {
             console.error('Error getting calculations from server:', error);
-            // Fallback to local storage
-            return this.getLocalCalculations(calculationType);
+            throw error;
         }
     }
 
@@ -85,6 +85,7 @@ class DatabaseManager {
 
     // Delete a calculation
     async deleteCalculation(calculationId, calculationType) {
+        if (this.authManager) await this.authManager.ready;
         if (!this.authManager || !this.authManager.isLoggedIn()) {
             // If not logged in, delete from local storage
             return this.deleteLocalCalculation(calculationId, calculationType);
