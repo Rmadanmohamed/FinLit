@@ -1027,7 +1027,7 @@ document.querySelectorAll('.tab-item').forEach(tab => {
 document.addEventListener('DOMContentLoaded', function() {
   // Check if AuthManager is available
   if (typeof AuthManager !== 'undefined') {
-    const authManager = new AuthManager();
+    const homeAuthManager = new AuthManager();
     
     // Update login status in account section
     function updateLoginStatus() {
@@ -1037,8 +1037,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const historyContent = document.getElementById('history-content');
       const userNameElement = document.getElementById('user-name');
       
-      if (authManager.isLoggedIn()) {
-        const user = authManager.getCurrentUser();
+      if (homeAuthManager.isLoggedIn()) {
+        const user = homeAuthManager.getCurrentUser();
         
         // Update account section
         if (loggedInElement && notLoggedInElement && userNameElement) {
@@ -1071,38 +1071,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Load user's history data
-    function loadUserHistory(user) {
-      // This is a placeholder function that would normally fetch data from a server
-      // For demo purposes, we'll use mock data
-      
-      // Update assessment results
-      document.getElementById('assessment-date').textContent = '15/06/2023';
-      document.getElementById('assessment-score').textContent = '78/100';
-      document.getElementById('knowledge-score').textContent = '82/100';
-      document.getElementById('behavior-score').textContent = '75/100';
-      document.getElementById('attitude-score').textContent = '77/100';
-      
-      // Update budget calculations
-      document.getElementById('budget-date').textContent = '20/06/2023';
-      document.getElementById('budget-income').textContent = 'EGP 8,500';
-      document.getElementById('budget-expenses').textContent = 'EGP 6,200';
-      document.getElementById('budget-savings').textContent = 'EGP 2,300';
-      
-      // Update savings calculations
-      document.getElementById('savings-date').textContent = '22/06/2023';
-      document.getElementById('savings-initial').textContent = 'EGP 10,000';
-      document.getElementById('savings-monthly').textContent = 'EGP 1,000';
-      document.getElementById('savings-final').textContent = 'EGP 82,000';
-      
-      // Update loan calculations
-      document.getElementById('loan-date').textContent = '25/06/2023';
-      document.getElementById('loan-amount').textContent = 'EGP 100,000';
-      document.getElementById('loan-payment').textContent = 'EGP 2,225';
-      document.getElementById('loan-interest').textContent = 'EGP 33,500';
+    async function loadUserHistory(user) {
+      const ids = ['assessment-date','assessment-score','knowledge-score','behavior-score','attitude-score','budget-date','budget-income','budget-expenses','budget-savings','savings-date','savings-initial','savings-monthly','savings-final','loan-date','loan-amount','loan-payment','loan-interest'];
+      const set = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value ?? '—'; };
+      ids.forEach(id => set(id, '—'));
+      try {
+        const rows = await homeAuthManager.getUserCalculations();
+        if (homeAuthManager.currentUser?.id !== user.id) return;
+        const latest = type => rows.filter(row => row.calculationType === type).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+        for (const [type, fields] of Object.entries({budget:{income:'income',expenses:'expenses',savings:'savings'},savings:{initial:'initialAmount',monthly:'monthlyDeposit',final:'finalAmount'},loan:{amount:'loanAmount',payment:'monthlyPayment',interest:'totalInterest'}})) {
+          const record = latest(type);
+          if (!record) continue;
+          set(type + '-date', new Date(record.createdAt).toLocaleDateString());
+          for (const [label, key] of Object.entries(fields)) {
+            const value = record.calculationData?.[key];
+            if (typeof value === 'number' && Number.isFinite(value)) set(type + '-' + label, new Intl.NumberFormat('en-EG', {style:'currency',currency:'EGP'}).format(value));
+          }
+        }
+      } catch (_) { /* display no fabricated history */ }
     }
-    
+
     // Add auth listener to update UI when auth state changes
-    authManager.addAuthListener(function(user) {
+    homeAuthManager.addAuthListener(function(user) {
       updateLoginStatus();
     });
     
@@ -1456,6 +1446,8 @@ function scrollToSection(id) {
     <script src="js/enhanced-animations.js"></script>
     <script src="js/calculators.js"></script>
     <script src="js/assessment.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
     <script src="js/account.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/resources.js"></script>

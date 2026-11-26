@@ -1,314 +1,76 @@
-/**
- * Digital Financial Literacy & Inclusion Platform
- * User Registration and Management
- */
-
+/** Server-backed account manager. Credentials and session tokens are never stored in browser storage. */
 class AuthManager {
     constructor() {
         this.currentUser = null;
         this.authListeners = [];
-        this.usersKey = 'finlit_users';
-        this.currentUserKey = 'finlit_current_user';
-        
-        // Load current user from localStorage if available
-        this.loadCurrentUser();
+        this.ready = this.restoreSession();
     }
-    
-    /**
-     * Register a new user
-     */
-    register(username, email, password) {
-        return new Promise((resolve, reject) => {
-            // Check if email already exists
-            const users = this.getAllUsers();
-            const existingUser = users.find(user => user.email === email);
-            
-            if (existingUser) {
-                reject(new Error('Email already registered'));
-                return;
-            }
-            
-            // Create new user
-            const newUser = {
-                id: this.generateUserId(),
-                username,
-                email,
-                password: this.hashPassword(password), // In a real app, use proper hashing
-                createdAt: new Date().toISOString(),
-                savedCalculations: []
-            };
-            
-            // Add to users array
-            users.push(newUser);
-            
-            // Save to localStorage
-            localStorage.setItem(this.usersKey, JSON.stringify(users));
-            
-            // Save to registered_users.html
-            this.saveToRegisteredUsers(newUser);
-            
-            // Set as current user
-            this.setCurrentUser(newUser);
-            
-            resolve(newUser);
+
+    async request(route, method = 'GET', data) {
+        const res = await fetch('/api' + route, {
+            method,
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-FinLit-Client': 'browser' },
+            body: data === undefined ? undefined : JSON.stringify(data)
         });
-    }
-    
-    /**
-     * Save user to registered_users.html
-     */
-    saveToRegisteredUsers(user) {
-        // This would typically be a server-side operation
-        // For this demo, we'll use localStorage to simulate
-        const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
-        
-        // Add new user to the array
-        registeredUsers.push({
-            username: user.username,
-            email: user.email,
-            date: user.createdAt
-        });
-        
-        // Save back to localStorage
-        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-    }
-    
-    /**
-     * Login a user
-     */
-    login(email, password) {
-        return new Promise((resolve, reject) => {
-            const users = this.getAllUsers();
-            const user = users.find(user => user.email === email);
-            
-            if (!user) {
-                reject(new Error('User not found'));
-                return;
-            }
-            
-            if (user.password !== this.hashPassword(password)) {
-                reject(new Error('Incorrect password'));
-                return;
-            }
-            
-            this.setCurrentUser(user);
-            resolve(user);
-        });
-    }
-    
-    /**
-     * Logout the current user
-     */
-    logout() {
-        localStorage.removeItem(this.currentUserKey);
-        this.currentUser = null;
-        this.notifyAuthListeners();
-    }
-    
-    /**
-     * Get all registered users
-     */
-    getAllUsers() {
-        const usersJson = localStorage.getItem(this.usersKey);
-        return usersJson ? JSON.parse(usersJson) : [];
-    }
-    
-    /**
-     * Get all registered users for display
-     */
-    getRegisteredUsers() {
-        const registeredUsersJson = localStorage.getItem('registered_users');
-        return registeredUsersJson ? JSON.parse(registeredUsersJson) : [];
-    }
-    
-    /**
-     * Set current user and notify listeners
-     */
-    setCurrentUser(user) {
-        // Remove password before storing in localStorage
-        const userToStore = { ...user };
-        delete userToStore.password;
-        
-        localStorage.setItem(this.currentUserKey, JSON.stringify(userToStore));
-        this.currentUser = userToStore;
-        this.notifyAuthListeners();
-    }
-    
-    /**
-     * Load current user from localStorage
-     */
-    loadCurrentUser() {
-        const userJson = localStorage.getItem(this.currentUserKey);
-        if (userJson) {
-            this.currentUser = JSON.parse(userJson);
-            this.notifyAuthListeners();
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok || !payload.success) {
+            if (res.status === 401) this.setCurrentUser(null);
+            const error = new Error(payload.message || 'Account service is unavailable');
+            error.status = res.status;
+            throw error;
         }
+        return payload;
     }
-    
-    /**
-     * Add auth state change listener
-     */
+    async restoreSession() {
+        try { this.setCurrentUser((await this.request('/users/me')).user); }
+        catch (_) { this.setCurrentUser(null); }
+    }
+    async register(username, email, password) {
+        await this.ready;
+        const payload = await this.request('/users/register', 'POST', { username, email, password });
+        this.setCurrentUser(payload.user);
+        return payload.user;
+    }
+    async login(email, password) {
+        await this.ready;
+        const payload = await this.request('/users/login', 'POST', { email, password });
+        this.setCurrentUser(payload.user);
+        return payload.user;
+    }
+    async logout() {
+        await this.ready;
+        try { await this.request('/users/logout', 'POST'); }
+        catch (error) { if (error.status !== 401) throw error; }
+        this.setCurrentUser(null);
+    }
+    isLoggedIn() { return Boolean(this.currentUser); }
+    getCurrentUser() { return this.currentUser; }
+    setCurrentUser(user) {
+        this.currentUser = user;
+        for (const listener of this.authListeners) listener(user);
+    }
     addAuthListener(listener) {
         this.authListeners.push(listener);
-        // Notify immediately with current state
         listener(this.currentUser);
     }
-    
-    /**
-     * Notify all auth listeners
-     */
-    notifyAuthListeners() {
-        this.authListeners.forEach(listener => {
-            listener(this.currentUser);
-        });
+    async getUserCalculations() {
+        await this.ready;
+        if (!this.currentUser) throw new Error('Login required');
+        return (await this.request('/calculations/' + encodeURIComponent(this.currentUser.id))).calculations;
     }
-    
-    /**
-     * Generate a unique user ID
-     */
-    generateUserId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    async saveCalculation(calculationType, calculationData, title) {
+        await this.ready;
+        if (!this.currentUser) throw new Error('Login required');
+        return (await this.request('/calculations/save', 'POST', {
+            userId: this.currentUser.id, calculationType, calculationData, title
+        })).calculation;
     }
-    
-    /**
-     * Hash password (simplified for demo)
-     * In a real app, use a proper hashing algorithm
-     */
-    hashPassword(password) {
-        // This is NOT secure, just for demo purposes
-        return btoa(password);
-    }
-}
-
-/**
- * Database Manager for handling user data and calculations
- */
-class DatabaseManager {
-    constructor(authManager) {
-        this.authManager = authManager;
-        this.calculationsKey = 'finlit_calculations';
-    }
-    
-    /**
-     * Save a calculation for the current user
-     */
-    saveCalculation(calculationType, title, data) {
-        return new Promise((resolve, reject) => {
-            const currentUser = this.authManager.currentUser;
-            
-            if (!currentUser) {
-                reject(new Error('User not logged in'));
-                return;
-            }
-            
-            // Get all users
-            const users = this.authManager.getAllUsers();
-            const userIndex = users.findIndex(user => user.id === currentUser.id);
-            
-            if (userIndex === -1) {
-                reject(new Error('User not found'));
-                return;
-            }
-            
-            // Create calculation object
-            const calculation = {
-                id: this.generateCalculationId(),
-                type: calculationType,
-                title,
-                data,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Add to user's saved calculations
-            if (!users[userIndex].savedCalculations) {
-                users[userIndex].savedCalculations = [];
-            }
-            
-            users[userIndex].savedCalculations.push(calculation);
-            
-            // Update localStorage
-            localStorage.setItem(this.authManager.usersKey, JSON.stringify(users));
-            
-            // Update current user
-            this.authManager.setCurrentUser(users[userIndex]);
-            
-            resolve(calculation);
-        });
-    }
-    
-    /**
-     * Get all saved calculations for the current user
-     */
-    getSavedCalculations() {
-        return new Promise((resolve, reject) => {
-            const currentUser = this.authManager.currentUser;
-            
-            if (!currentUser) {
-                reject(new Error('User not logged in'));
-                return;
-            }
-            
-            // Get all users to ensure we have the latest data
-            const users = this.authManager.getAllUsers();
-            const user = users.find(user => user.id === currentUser.id);
-            
-            if (!user) {
-                reject(new Error('User not found'));
-                return;
-            }
-            
-            resolve(user.savedCalculations || []);
-        });
-    }
-    
-    /**
-     * Delete a saved calculation
-     */
-    deleteCalculation(calculationId) {
-        return new Promise((resolve, reject) => {
-            const currentUser = this.authManager.currentUser;
-            
-            if (!currentUser) {
-                reject(new Error('User not logged in'));
-                return;
-            }
-            
-            // Get all users
-            const users = this.authManager.getAllUsers();
-            const userIndex = users.findIndex(user => user.id === currentUser.id);
-            
-            if (userIndex === -1) {
-                reject(new Error('User not found'));
-                return;
-            }
-            
-            // Find and remove the calculation
-            const calculationIndex = users[userIndex].savedCalculations.findIndex(
-                calc => calc.id === calculationId
-            );
-            
-            if (calculationIndex === -1) {
-                reject(new Error('Calculation not found'));
-                return;
-            }
-            
-            users[userIndex].savedCalculations.splice(calculationIndex, 1);
-            
-            // Update localStorage
-            localStorage.setItem(this.authManager.usersKey, JSON.stringify(users));
-            
-            // Update current user
-            this.authManager.setCurrentUser(users[userIndex]);
-            
-            resolve();
-        });
-    }
-    
-    /**
-     * Generate a unique calculation ID
-     */
-    generateCalculationId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    async deleteCalculation(id) {
+        await this.ready;
+        if (!this.currentUser) throw new Error('Login required');
+        await this.request('/calculations/' + encodeURIComponent(id), 'DELETE');
+        return true;
     }
 }
 
@@ -362,7 +124,9 @@ function initRegistrationPreview() {
     
     // Handle form submission
     registerForm.addEventListener('submit', function(e) {
+        if (registerForm.dataset.confirmed === 'true') { delete registerForm.dataset.confirmed; return; }
         e.preventDefault();
+        e.stopImmediatePropagation();
         
         // Clear previous messages
         registerMessage.textContent = '';
@@ -381,8 +145,8 @@ function initRegistrationPreview() {
             return;
         }
         
-        if (registerPassword.value.length < 6) {
-            registerMessage.textContent = 'Password must be at least 6 characters';
+        if (registerPassword.value.length < 8) {
+            registerMessage.textContent = 'Password must be at least 8 characters';
             registerMessage.classList.add('error');
             return;
         }
@@ -399,7 +163,7 @@ function initRegistrationPreview() {
         previewContainer.classList.add('active');
         registerForm.style.opacity = '0.5';
         registerForm.style.pointerEvents = 'none';
-    });
+    }, true);
     
     // Handle edit button click
     document.getElementById('preview-edit-btn').addEventListener('click', function() {
@@ -408,41 +172,12 @@ function initRegistrationPreview() {
         registerForm.style.pointerEvents = 'auto';
     });
     
-    // Handle confirm button click
+    // Confirmation delegates to the account page's single registration handler.
     document.getElementById('preview-confirm-btn').addEventListener('click', function() {
-        const authManager = new AuthManager();
-        
-        // Register the user
-        authManager.register(
-            registerUsername.value,
-            registerEmail.value,
-            registerPassword.value
-        ).then(user => {
-            // Show success message
-            registerMessage.textContent = 'Registration successful! Redirecting to your profile...';
-            registerMessage.classList.add('success');
-            
-            // Hide preview
-            previewContainer.classList.remove('active');
-            
-            // Reset form
-            registerForm.reset();
-            registerForm.style.opacity = '1';
-            registerForm.style.pointerEvents = 'auto';
-            
-            // Redirect to profile section after a delay
-            setTimeout(() => {
-                document.querySelector('[data-section="profile"]').click();
-            }, 2000);
-        }).catch(error => {
-            // Show error message
-            registerMessage.textContent = error.message;
-            registerMessage.classList.add('error');
-            
-            // Hide preview
-            previewContainer.classList.remove('active');
-            registerForm.style.opacity = '1';
-            registerForm.style.pointerEvents = 'auto';
-        });
+        previewContainer.classList.remove('active');
+        registerForm.style.opacity = '1';
+        registerForm.style.pointerEvents = 'auto';
+        registerForm.dataset.confirmed = 'true';
+        registerForm.requestSubmit();
     });
 }

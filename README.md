@@ -1,5 +1,15 @@
 # FinLit — Financial Literacy Platform
 
+> **Security remediation branch — not production-certified.** Registration and login use the Express API, salted scrypt hashes and opaque, expiring, revocable sessions. The browser receives an HttpOnly, SameSite=Strict cookie (Secure in production); non-browser clients may receive a bearer token. Account history is read from authenticated endpoints. No browser password store is used. Legacy browser records are not imported or deleted automatically. The public user directory is restricted because there is no authorized administrative role. Historical credentials in Git history must still be considered exposed and rotated by their owners. Do not deploy this branch until its integration, browser and security gates pass.
+
+### Local secure setup
+
+Run `npm ci` and `npm start` using Node.js 22 or a supported compatible release. Open the app through the Express origin rather than file://. The local single-process server uses ignored `.finlit-data/` by default; optionally set `FINLIT_DATA_DIR` to a private persistent directory outside the public tree. Existing file-backed accounts can be pointed to explicitly after backing them up; their legacy passwords are upgraded only upon successful login. Never use the tracked empty fixtures as a live database. Opaque session hashes and records are stored privately; writes are atomic for a single process. Vercel/serverless account API requests fail closed because temporary storage is not durable. A managed/shared data store and distributed rate limiter are required for multi-instance deployment; production HTTPS is mandatory. No actual account records were migrated.
+
+For browser requests, the frontend uses `X-FinLit-Client: browser` and same-origin cookies. For API clients use `Authorization: Bearer <token>`. Session duration is one hour; logout revokes the current token. Run `node --test tests/security.test.js` for the isolated synthetic API integration tests.
+
+The following description is historical context from the baseline audit; use the repaired setup and API notes above where they differ.
+
 ## Overview and problem statement
 
 FinLit is an educational web application designed to help users explore digital financial literacy, inclusion, budgeting, loans and savings. It combines educational resources, interactive calculators, assessments, account-related pages and a lightweight Express API.

@@ -395,7 +395,7 @@ function initUserAccountManagement() {
             
             // Show the View Registered Users link
             if (viewUsersLink) {
-                viewUsersLink.style.display = 'inline-block';
+                viewUsersLink.style.display = 'none';
             }
             
             // Update profile info
@@ -531,8 +531,8 @@ function initUserAccountManagement() {
             }
             
             // Validate password length
-            if (password.length < 6) {
-                registerMessage.textContent = 'Password must be at least 6 characters long';
+            if (password.length < 8) {
+                registerMessage.textContent = 'Password must be at least 8 characters long';
                 registerMessage.className = 'form-message error';
                 return;
             }
@@ -550,10 +550,8 @@ function initUserAccountManagement() {
                 registerMessage.className = 'form-message info';
                 
                 // Register the user
-                const user = await authManager.register(username, email, password);
+                await authManager.register(username, email, password);
                 
-                // Save user data to localStorage and dataset
-                saveUserToDataset(user);
                 
                 // Show success message
                 registerMessage.textContent = 'Account created successfully!';
@@ -574,73 +572,11 @@ function initUserAccountManagement() {
         });
     }
     
-    /**
-     * Save user data to dataset and backend
-     */
-    function saveUserToDataset(user) {
-        try {
-            // Get existing users from data/users.json or create empty array
-            let users = [];
-            try {
-                const usersData = localStorage.getItem('finlit_users_data');
-                if (usersData) {
-                    users = JSON.parse(usersData);
-                }
-            } catch (e) {
-                console.error('Error parsing users data:', e);
-            }
-            
-            // Add new user to array (without password for security)
-            const userData = {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                createdAt: user.createdAt
-            };
-            
-            users.push(userData);
-            
-            // Save back to localStorage
-            localStorage.setItem('finlit_users_data', JSON.stringify(users));
-            
-            // In a real application, this would be a server-side API call
-            console.log('User saved to dataset:', userData);
-            
-            // Save to registered_users.html
-            const registeredUser = {
-                username: user.username,
-                email: user.email,
-                date: user.createdAt
-            };
-            
-            // Get existing registered users
-            let registeredUsers = [];
-            try {
-                const registeredUsersData = localStorage.getItem('registered_users');
-                if (registeredUsersData) {
-                    registeredUsers = JSON.parse(registeredUsersData);
-                }
-            } catch (e) {
-                console.error('Error parsing registered users data:', e);
-            }
-            
-            // Add new user
-            registeredUsers.push(registeredUser);
-            
-            // Save back to localStorage
-            localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-            
-            return true;
-        } catch (error) {
-            console.error('Error saving user to dataset:', error);
-            return false;
-        }
-    }
-    
     // Logout button
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            authManager.logout();
+        logoutBtn.addEventListener('click', async () => {
+            try { await authManager.logout(); }
+            catch (_) { alert('Logout failed. Please retry.'); return; }
             
             // Activate login section
             document.querySelector('[data-section="login"]').click();
@@ -668,7 +604,7 @@ function initUserAccountManagement() {
         try {
             // Get saved calculations from current user
             const currentUser = authManager.currentUser;
-            if (!currentUser || !currentUser.savedCalculations) {
+            if (!currentUser) {
                 calculationsList.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-calculator"></i>
@@ -679,7 +615,9 @@ function initUserAccountManagement() {
             }
             
             // Filter calculations by type
-            let filteredCalculations = currentUser.savedCalculations;
+            const records = await authManager.getUserCalculations();
+            if (authManager.currentUser?.id !== currentUser.id) return;
+            let filteredCalculations = records.map(record => ({ id: record.id, type: record.calculationType, title: record.title || record.calculationType, data: record.calculationData, createdAt: record.createdAt }));
             if (filterType !== 'all') {
                 filteredCalculations = filteredCalculations.filter(calc => calc.type === filterType);
             }
@@ -711,10 +649,10 @@ function initUserAccountManagement() {
                 
                 // Create calculation card
                 calculationsHTML += `
-                    <div class="calculation-card" data-id="${calc.id}" data-type="${calc.type}">
+                    <div class="calculation-card" data-id="${escapeHtml(calc.id)}" data-type="${escapeHtml(calc.type)}">
                         <div class="calculation-header">
-                            <h4>${calc.title}</h4>
-                            <span class="calculation-type ${calc.type}">${calc.type}</span>
+                            <h4>${escapeHtml(calc.title)}</h4>
+                            <span class="calculation-type ${escapeHtml(calc.type)}">${escapeHtml(calc.type)}</span>
                         </div>
                         <div class="calculation-details">
                             <div class="calculation-data">
@@ -728,7 +666,7 @@ function initUserAccountManagement() {
                             </div>
                         </div>
                         <div class="calculation-actions">
-                            <button class="btn-outline delete-calculation" data-id="${calc.id}">
+                            <button class="btn-outline delete-calculation" data-id="${escapeHtml(calc.id)}">
                                 <i class="fas fa-trash"></i>
                                 Delete
                             </button>
@@ -745,7 +683,7 @@ function initUserAccountManagement() {
                     const calculationId = this.getAttribute('data-id');
                     
                     try {
-                        await dbManager.deleteCalculation(calculationId);
+                        await authManager.deleteCalculation(calculationId);
                         
                         // Remove from UI
                         const calculationCard = document.querySelector(`.calculation-card[data-id="${calculationId}"]`);
@@ -798,11 +736,11 @@ function initUserAccountManagement() {
                     </div>
                     <div class="data-item">
                         <span class="data-label">Interest Rate:</span>
-                        <span class="data-value">${calculation.data.interestRate}%</span>
+                        <span class="data-value">${escapeHtml(calculation.data.interestRate)}%</span>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Duration:</span>
-                        <span class="data-value">${calculation.data.years} years</span>
+                        <span class="data-value">${escapeHtml(calculation.data.years)} years</span>
                     </div>
                     <div class="data-item highlight">
                         <span class="data-label">Final Amount:</span>
@@ -818,11 +756,11 @@ function initUserAccountManagement() {
                     </div>
                     <div class="data-item">
                         <span class="data-label">Interest Rate:</span>
-                        <span class="data-value">${calculation.data.interestRate}%</span>
+                        <span class="data-value">${escapeHtml(calculation.data.interestRate)}%</span>
                     </div>
                     <div class="data-item">
                         <span class="data-label">Term:</span>
-                        <span class="data-value">${calculation.data.term} ${calculation.data.termUnit}</span>
+                        <span class="data-value">${escapeHtml(calculation.data.term)} ${escapeHtml(calculation.data.termUnit)}</span>
                     </div>
                     <div class="data-item highlight">
                         <span class="data-label">Monthly Payment:</span>
@@ -850,7 +788,7 @@ function initUserAccountManagement() {
                     </div>
                     <div class="data-item">
                         <span class="data-label">Savings Rate:</span>
-                        <span class="data-value">${calculation.data.savingsRate}%</span>
+                        <span class="data-value">${escapeHtml(calculation.data.savingsRate)}%</span>
                     </div>
                 `;
                 
@@ -866,6 +804,10 @@ function initUserAccountManagement() {
     /**
      * Format currency
      */
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    }
+
     function formatCurrency(amount) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
