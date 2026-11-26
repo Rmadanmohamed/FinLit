@@ -1,5 +1,12 @@
 # FinLit — Financial Literacy Platform
 
+> **Phase 2 security repair branch (not production-ready):** The API now hashes new passwords with salted scrypt, upgrades a legacy plaintext record only after a successful login, issues one-hour signed bearer tokens, restricts the user directory and enforces calculation ownership. The browser account demo still uses independent localStorage authentication and must not be used with real credentials. Existing tracked data and repository history are not remediated by this branch. Do not expose the application publicly.
+
+For API development, set `FINLIT_DATA_DIR` to an empty private directory outside the repository. Set `FINLIT_AUTH_SECRET` to a securely generated value of at least 32 bytes in production (local runs generate an ephemeral key if unset). New storage starts empty; existing records are not bulk-migrated. Use the returned `token` as `Authorization: Bearer <token>` on calculation endpoints; the user directory denies access because no administrative role exists. Tokens expire after one hour; revocation, rate limiting, durable storage and frontend integration remain outstanding. Run the isolated integration suite with `node --test tests/security.test.js` after `npm ci` using a supported Node.js release with built-in fetch and node:test (e.g. Node 22). Tests have not yet been executed.
+
+The original README below describes the pre-repair implementation; its warnings remain applicable to the browser demo and default branch.
+
+
 ## Overview and problem statement
 
 FinLit is an educational web application designed to help users explore digital financial literacy, inclusion, budgeting, loans and savings. It combines educational resources, interactive calculators, assessments, account-related pages and a lightweight Express API.
