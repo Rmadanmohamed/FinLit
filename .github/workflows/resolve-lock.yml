@@ -1,0 +1,33 @@
+name: Resolve compatible security patches
+on:
+  push:
+    branches: ['audit/phase2-server-security']
+    paths: ['.github/workflows/resolve-lock.yml']
+permissions:
+  contents: read
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: npm audit fix --package-lock-only --ignore-scripts --omit=dev --audit-level=high
+      - run: npm ci
+      - run: node --test tests/security.test.js
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Export public dependency manifests for review
+        run: |
+          node - <<'JS'
+          const fs = require('node:fs');
+          for (const p of ['package.json','package-lock.json']) {
+            const encoded = fs.readFileSync(p).toString('base64');
+            console.log('AUDIT_LOCK_START ' + p + ' ' + encoded.length);
+            for (let i=0; i<encoded.length; i+=500) console.log('AUDIT_LOCK_PART ' + p + ' ' + (i/500) + ' ' + encoded.slice(i,i+500));
+            console.log('AUDIT_LOCK_END ' + p);
+          }
+          JS
