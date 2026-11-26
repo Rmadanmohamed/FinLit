@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+const crypto = require('node:crypto');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
@@ -8,9 +8,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname)));
+app.use(bodyParser.json({ limit: '64kb' }));
+// Serve only public application assets, never the repository or storage directory.
+for (const dir of ['css', 'js', 'images', 'CALCULATORS']) {
+    app.use('/' + dir, express.static(path.join(__dirname, dir), { dotfiles: 'deny' }));
+}
+for (const page of ['FINLIT.html', 'account.html', 'information.html', 'registered_users.html', 'FinLit2025_Diagrams.html']) {
+    app.get('/' + page, (req, res) => res.sendFile(path.join(__dirname, page)));
+}
+app.use('/api', (req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+});
 
 // Root Route
 app.get('/', (req, res) => {
@@ -19,7 +28,7 @@ app.get('/', (req, res) => {
 
 // Data storage paths
 // Vercel serverless functions have a read-only filesystem except for /tmp
-const DATA_DIR = process.env.VERCEL ? '/tmp/data' : path.join(__dirname, 'data');
+const DATA_DIR = process.env.FINLIT_DATA_DIR || (process.env.VERCEL ? '/tmp/data' : path.join(__dirname, 'data'));
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const CALCULATIONS_FILE = path.join(DATA_DIR, 'calculations.json');
 
@@ -55,6 +64,64 @@ try {
     console.error('Could not initialize data files:', e);
 }
 
+// Passwords use a per-user random salt and Node's memory-hard scrypt KDF.
+const secret = process.env.FINLIT_AUTH_SECRET;
+if ((process.env.VERCEL || process.env.NODE_ENV === 'production') && (!secret || Buffer.byteLength(secret) < 32)) {
+    throw new Error('FINLIT_AUTH_SECRET must contain at least 32 bytes in production');
+}
+const signingKey = secret || crypto.randomBytes(32);
+function validPassword(password) {
+    return typeof password === 'string' && password.length > 0 && Buffer.byteLength(password) <= 1024;
+}
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16);
+    const hash = crypto.scryptSync(password, salt, 64, { N: 32768, r: 8, p: 3, maxmem: 64 * 1024 * 1024 });
+    return salt.toString('hex') + ':' + hash.toString('hex');
+}
+function equalText(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string') return false;
+    const x = Buffer.from(a), y = Buffer.from(b);
+    return x.length === y.length && crypto.timingSafeEqual(x, y);
+}
+function verifyPassword(user, password) {
+    if (!validPassword(password)) return false;
+    if (typeof user.passwordHash === 'string') {
+        const parts = user.passwordHash.split(':');
+        if (parts.length !== 2 || !/^[a-f0-9]{32}$/.test(parts[0]) || !/^[a-f0-9]{128}$/.test(parts[1])) return false;
+        const hash = crypto.scryptSync(password, Buffer.from(parts[0], 'hex'), 64, { N: 32768, r: 8, p: 3, maxmem: 64 * 1024 * 1024 });
+        return crypto.timingSafeEqual(hash, Buffer.from(parts[1], 'hex'));
+    }
+    // Legacy records are upgraded only after successful authentication.
+    return equalText(user.password, password);
+}
+function publicUser(user) {
+    return { id: user.id, username: user.username, email: user.email, createdAt: user.createdAt };
+}
+function sign(payload) {
+    return crypto.createHmac('sha256', signingKey).update(payload).digest('base64url');
+}
+function issueToken(user) {
+    const payload = Buffer.from(JSON.stringify({ sub: user.id, exp: Date.now() + 60 * 60 * 1000 })).toString('base64url');
+    return payload + '.' + sign(payload);
+}
+function requireAuth(req, res, next) {
+    try {
+        const header = req.get('Authorization') || '';
+        const match = /^Bearer ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/.exec(header);
+        if (match && equalText(sign(match[1]), match[2])) {
+            const claims = JSON.parse(Buffer.from(match[1], 'base64url').toString('utf8'));
+            if (typeof claims.sub === 'string' && Number.isFinite(claims.exp) && claims.exp > Date.now()) {
+                const users = JSON.parse(fs.readFileSync(USERS_FILE)).users;
+                if (users.some(user => user.id === claims.sub)) {
+                    req.userId = claims.sub;
+                    return next();
+                }
+            }
+        }
+    } catch (_) { /* reject malformed or unverifiable credentials */ }
+    return res.status(401).json({ success: false, message: 'Authentication required' });
+}
+
 // API Routes
 
 // Register a new user
@@ -62,8 +129,8 @@ app.post('/api/users/register', (req, res) => {
     try {
         const { username, email, password } = req.body;
         
-        if (!username || !email || !password) {
-            return res.status(400).json({ success: false, message: 'All fields are required' });
+        if (typeof username !== 'string' || !username.trim() || username.length > 200 || typeof email !== 'string' || !email.trim() || email.length > 254 || !validPassword(password) || password.length < 8) {
+            return res.status(400).json({ success: false, message: 'Valid username, email and password (at least 8 characters) are required' });
         }
         
         const usersData = JSON.parse(fs.readFileSync(USERS_FILE));
@@ -76,10 +143,10 @@ app.post('/api/users/register', (req, res) => {
         
         // Create new user
         const newUser = {
-            id: `user_${Date.now()}`,
+            id: 'user_' + crypto.randomUUID(),
             username,
             email,
-            password, // In a real app, this would be hashed
+            passwordHash: hashPassword(password),
             createdAt: new Date().toISOString()
         };
         
@@ -87,9 +154,7 @@ app.post('/api/users/register', (req, res) => {
         fs.writeFileSync(USERS_FILE, JSON.stringify(usersData, null, 2));
         
         // Don't send password back to client
-        const { password: _, ...userWithoutPassword } = newUser;
-        
-        res.status(201).json({ success: true, user: userWithoutPassword });
+        res.status(201).json({ success: true, user: publicUser(newUser), token: issueToken(newUser) });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -101,7 +166,7 @@ app.post('/api/users/login', (req, res) => {
     try {
         const { email, password } = req.body;
         
-        if (!email || !password) {
+        if (typeof email !== 'string' || !email || !validPassword(password)) {
             return res.status(400).json({ success: false, message: 'Email and password are required' });
         }
         
@@ -110,42 +175,33 @@ app.post('/api/users/login', (req, res) => {
         // Find user by email
         const user = usersData.users.find(user => user.email === email);
         
-        if (!user || user.password !== password) {
+        if (!user || !verifyPassword(user, password)) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
         
         // Don't send password back to client
-        const { password: _, ...userWithoutPassword } = user;
-        
-        res.json({ success: true, user: userWithoutPassword });
+        if (!user.passwordHash) {
+            user.passwordHash = hashPassword(password);
+            delete user.password;
+            fs.writeFileSync(USERS_FILE, JSON.stringify(usersData, null, 2));
+        }
+        res.json({ success: true, user: publicUser(user), token: issueToken(user) });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
-// Get all users
-app.get('/api/users', (req, res) => {
-    try {
-        const usersData = JSON.parse(fs.readFileSync(USERS_FILE));
-        
-        // Remove passwords from response
-        const usersWithoutPasswords = usersData.users.map(user => {
-            const { password, ...userWithoutPassword } = user;
-            return userWithoutPassword;
-        });
-        
-        res.json({ success: true, users: usersWithoutPasswords });
-    } catch (error) {
-        console.error('Get users error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
+// No administrative role is defined; do not expose other users' records.
+app.get('/api/users', requireAuth, (req, res) => {
+    res.status(403).json({ success: false, message: 'User directory is restricted' });
 });
 
 // Save calculation
-app.post('/api/calculations/save', (req, res) => {
+app.post('/api/calculations/save', requireAuth, (req, res) => {
     try {
         const { userId, calculationType, calculationData } = req.body;
+        if (userId !== req.userId) return res.status(403).json({ success: false, message: 'Access denied' });
         
         if (!userId || !calculationType || !calculationData) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -154,7 +210,7 @@ app.post('/api/calculations/save', (req, res) => {
         const calculationsData = JSON.parse(fs.readFileSync(CALCULATIONS_FILE));
         
         const newCalculation = {
-            id: Date.now().toString(),
+            id: crypto.randomUUID(),
             userId,
             calculationType,
             calculationData,
@@ -172,9 +228,10 @@ app.post('/api/calculations/save', (req, res) => {
 });
 
 // Get user's calculations
-app.get('/api/calculations/:userId', (req, res) => {
+app.get('/api/calculations/:userId', requireAuth, (req, res) => {
     try {
         const { userId } = req.params;
+        if (userId !== req.userId) return res.status(403).json({ success: false, message: 'Access denied' });
         
         if (!userId) {
             return res.status(400).json({ success: false, message: 'User ID is required' });
@@ -192,7 +249,7 @@ app.get('/api/calculations/:userId', (req, res) => {
 });
 
 // Delete calculation
-app.delete('/api/calculations/:id', (req, res) => {
+app.delete('/api/calculations/:id', requireAuth, (req, res) => {
     try {
         const { id } = req.params;
         
@@ -202,7 +259,7 @@ app.delete('/api/calculations/:id', (req, res) => {
         
         const calculationsData = JSON.parse(fs.readFileSync(CALCULATIONS_FILE));
         
-        const calculationIndex = calculationsData.calculations.findIndex(calc => calc.id === id);
+        const calculationIndex = calculationsData.calculations.findIndex(calc => calc.id === id && calc.userId === req.userId);
         
         if (calculationIndex === -1) {
             return res.status(404).json({ success: false, message: 'Calculation not found' });
@@ -219,7 +276,7 @@ app.delete('/api/calculations/:id', (req, res) => {
 });
 
 // Start server (only if not running on Vercel)
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+if (require.main === module && !process.env.VERCEL) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
